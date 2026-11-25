@@ -1,0 +1,14 @@
+# secrets
+.env
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+# Jupyter / Colab
+.ipynb_checkpoints/
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
