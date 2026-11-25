@@ -1,0 +1,49 @@
+# Render Blueprint: the deploy settings as a file, so they are reviewable in a pull request
+# and the service can be recreated exactly instead of being clicked together again.
+#
+# IMPORTANT: the service we run today was created through the dashboard, so it is NOT managed
+# by this file. Render only applies a Blueprint to services it created from one. This file is
+# therefore two things: the documented truth of what the dashboard settings must be, and the
+# way to recreate the service if it is ever lost. If you do create a Blueprint from it, you
+# will get a SECOND service with a different URL; delete the old one first.
+#
+# Field names follow render.com/docs/blueprint-spec. Validate with:
+#   render blueprints validate render.yaml      (needs Render CLI 2.7.0+)
+
+services:
+  - type: web
+    name: voting-advice-praha-2026
+    runtime: python
+    repo: https://github.com/ggtvrxmanz/voting-advice-praha-2026
+    branch: main
+    region: frankfurt            # closest of Render's regions to Prague; measured faster
+                                 # to litellm.vse.cz than the team's own campus connection
+    plan: free                   # 0.1 CPU, 512 MB, spins down after 15 min idle
+
+    buildCommand: pip install -r requirements.txt
+
+    # One worker: the query cache, the judge cache and the rate-limit counters all live in
+    # one process's memory, and 512 MB does not stretch to a second copy of the embedding
+    # matrix. Threads because every request waits on the proxy, not on the CPU.
+    # timeout 600 because gunicorn's default of 30 s would kill a 50-call analyse;
+    # Render's own proxy allows far longer.
+    startCommand: >-
+      gunicorn --chdir app server:app --bind 0.0.0.0:$PORT
+      --workers 1 --threads 8 --timeout 600
+
+    # Must not call the model, and must stay outside the password: Render's health check
+    # cannot log in. Answers 200 with ok:false when app/data has not been exported yet, so
+    # a missing export does not fail the deploy.
+    healthCheckPath: /api/health
+
+    autoDeployTrigger: commit    # every push to main deploys
+
+    envVars:
+      - key: LITELLM_BASE_URL
+        value: https://litellm.vse.cz/v1
+      # sync: false means Render asks for the value in the dashboard and never stores it
+      # in Git. Both of these are secrets and must never appear in this file.
+      - key: LITELLM_API_KEY
+        sync: false
+      - key: APP_PASSWORD
+        sync: false

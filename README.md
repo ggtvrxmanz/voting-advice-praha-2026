@@ -123,7 +123,54 @@ wrong judge. The same applies to `tau`, which `C6` freezes to a file.
 If `E0` stops with `need 3 fully cached claims`, the judge cache only holds `D1`'s own test claim.
 Run `score_claim` once per extra claim in a scratch cell (about 50 judge calls each), then re-run `E0`.
 
-## Deploy to Render: TODO (Phase 5)
+## Deploy to Render
+One free web service in Frankfurt, auto-deploying from `main`. The settings live in
+[`render.yaml`](render.yaml) as the documented truth — read it before changing anything in
+the dashboard. The running service was created through the dashboard, so Render does **not**
+apply that file to it; the file is there to be reviewed and to recreate the service exactly.
+
+| Setting | Value |
+|---|---|
+| Build command | `pip install -r requirements.txt` |
+| Start command | `gunicorn --chdir app server:app --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 600` |
+| Health check path | `/api/health` |
+| Region / plan | Frankfurt / Free |
+| Branch | `main`, auto-deploy on commit |
+
+Why the start command reads like that: **one worker** because the query cache, the judge
+cache and the rate-limit counters all live in one process's memory and 512 MB will not hold
+a second copy of the embedding matrix; **threads** because each request waits on the proxy
+rather than the CPU; **`--timeout 600`** because gunicorn's default of 30 s would kill a
+50-call analysis long before it finished.
+
+### Order of operations, and why it matters
+Do these in order. Steps 2 and 3 must not be swapped.
+
+1. **Merge the phase branches into `main`.** Auto-deploy fires, but the start command is
+   still the Phase 1 probe, so nothing is exposed. Harmless on purpose.
+2. **Set `APP_PASSWORD`** in Render → Environment. Hard rule 3: the URL is protected until
+   the teacher or VŠE IT agrees to public use. Do this *before* step 3, or there is a window
+   in which the app is live, open, and spending the university's LiteLLM key.
+3. **Change the start command and health check path** in Render → Settings. This is the step
+   that makes the app live.
+4. **Verify**: `/api/health` answers 200, the root URL challenges for the password, and a
+   wrong password is refused.
+
+`LITELLM_API_KEY` and `APP_PASSWORD` are set in the dashboard only, never in Git. In
+`render.yaml` they carry `sync: false`, which tells Render to ask for the value instead of
+reading one from the file.
+
+### What works before the notebook has been exported
+With `app/data` empty, `/api/health` answers `{"ok": false}` and the page runs in demo mode
+with fictional parties. The deploy still succeeds and the health check still passes, which
+is deliberate. `/api/analyze` cannot return real results until `E0` has been run and
+`app/data` committed — see *Refresh data from the notebook* above.
+
+### Cold starts
+A free service spins down after 15 minutes without traffic and takes up to about a minute to
+come back, so the first request after a quiet spell is slow. We do not ping the service to
+keep it awake: Render's staff call that abuse of the free tier. Tell users instead, and
+expect the first analysis of a session to include the spin-up.
 ## Free-tier limits: TODO (Phase 6)
 
 ## Team rules
