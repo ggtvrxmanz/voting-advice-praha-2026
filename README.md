@@ -19,7 +19,40 @@ cp .env.example .env               # then put your LiteLLM key into .env
 `python scripts/probe.py` makes one embedding call and one chat call and prints `OK` or `FAIL` for each.
 
 ## Run the app locally: TODO (Phase 4)
-## Tests: TODO (Phase 3)
+
+## Tests
+```bash
+python -m pytest tests/ -q -rs      # -rs prints why anything was skipped
+```
+No test touches the network. `tests/conftest.py` puts `app/` on `sys.path`, which is how
+Render runs the app too (`gunicorn --chdir app server:app`), so the import is the same one
+production uses.
+
+| File | What it covers | Needs `app/data`? |
+|---|---|---|
+| `tests/test_pipeline.py` | `parse`, `passage_score`, `claim_score`, `rank_parties` | no |
+| `tests/test_parity.py` | `score_claim` against the notebook's own answers | **yes** |
+
+`test_parity.py` skips with a message naming the missing files until the notebook's `E0`
+cell has been run and its output copied in. It is the test that proves this code reproduces
+the evaluated method, and it works like an answer key:
+
+- The caches are keyed by a hash of the configuration — `sha1(embed_model | instr | claim)`
+  for a query, and `sha1(json([llm_model, prompt_version, lang, claim, passage_id, llm_params]))`
+  for a judge answer.
+- The fixtures are stored under the keys **the notebook computed**; the test looks them up
+  under the keys **this code computes**.
+- So a wrong model, prompt version, instruction prefix or parameter set gives a different
+  key, the lookup misses, the code reaches for the network, and a fake client fails the test.
+  A wrong retrieval order, `tau` or scoring rule keeps the keys but changes the rows, which
+  the row-by-row comparison catches instead.
+
+The fake client raises a `BaseException`, not an `Exception`, on purpose: `ask_msgs` retries
+on `except Exception`, so an ordinary error would be swallowed, slept over three times and
+then misreported as a proxy outage.
+
+`tests/test_api.py` (health, the analyze contract, 400 on 6 claims) arrives with the server
+in Phase 4 — it cannot run before there is an app to import.
 
 ## Refresh data from the notebook
 The app never holds a copy of the method: the notebook writes the config the app reads, so the
