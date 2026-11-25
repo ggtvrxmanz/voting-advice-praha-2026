@@ -46,10 +46,6 @@ pip install -r requirements.txt
 cp .env.example .env                # then put your LiteLLM key into .env
 ```
 
-`.env` is git-ignored and must stay that way. If a key ever reaches a commit, deleting the
-file is **not** enough — the key is still in the history, so rotate it with VŠE IT first and
-then clean the history.
-
 ## Check the proxy is reachable
 ```bash
 python scripts/probe.py
