@@ -55,6 +55,11 @@ QUERY_CACHE: dict[str, np.ndarray] = {}  # sha1 -> query vector
 JUDGE_CACHE: dict[str, dict] = {}  # sha1 -> judge answer
 LAST_ERROR = {"msg": ""}  # last LLM error, shown by /api/health and the page
 
+# Counters the server uses for its daily cap. judge_calls counts prompts actually sent to
+# the proxy, including a re-ask and each failed retry, so the cap limits real usage rather
+# than requests. In-process only: a restart resets them, which Render may do at any time.
+STATS = {"judge_calls": 0, "cache_hits": 0, "embed_calls": 0}
+
 
 class DataMissing(RuntimeError):
     """app/data has not been exported from the notebook yet."""
@@ -134,6 +139,7 @@ def embed_query(claim: str) -> np.ndarray:
     key = query_key(claim)
     if key not in QUERY_CACHE:
         c = config()
+        STATS["embed_calls"] += 1
         r = client().embeddings.create(
             model=c["embed_model"], input=[c["instr"] + claim]
         )
@@ -273,6 +279,7 @@ def ask_msgs(msgs: list[dict]) -> str | None:
     c = config()
     for t in range(3):
         try:
+            STATS["judge_calls"] += 1
             r = client().chat.completions.create(
                 model=c["llm_model"], messages=msgs, **c["llm_params"]
             )
@@ -287,6 +294,7 @@ def judge_claim(claim: str, pid: str) -> dict:
     """One passage judged. Cached; one re-ask with the reason, exactly as C4/D1."""
     key = judge_key(claim, pid)
     if key in JUDGE_CACHE:
+        STATS["cache_hits"] += 1
         return JUDGE_CACHE[key]
 
     passage = corpus()["text"][pid]

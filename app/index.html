@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volební kalkulačka Praha 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Single white theme by request. Layout: input card, then overall ranking, then one card per claim. */
+  --bg: #ffffff;
+  --ink: #17202c;
+  --muted: #5d6877;
+  --line: #e1e5eb;
+  --track: #eef1f5;
+  --accent: #2c4a7e;
+  --accent-soft: #edf2fa;
+  --pos: #23744a;
+  --pos-soft: #e5f3ea;
+  --neg: #b23a3a;
+  --neg-soft: #f9e6e6;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); }
+body { color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 56px; display: flex; flex-direction: column; gap: 24px; }
+
+header { display: flex; flex-direction: column; gap: 8px; }
+h1 { font-family: var(--font-display); font-size: 32px; line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 21px; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 66ch; margin: 0; }
+.badge { align-self: flex-start; padding: 3px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.badge.demo { background: var(--neg-soft); color: var(--neg); }
+
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg); }
+
+/* ---------- input ---------- */
+label.big { font-weight: 600; }
+textarea {
+  width: 100%; resize: vertical; min-height: 110px;
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+}
+textarea:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.input-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.chars { font-variant-numeric: tabular-nums; }
+.chars.full { color: var(--neg); font-weight: 600; }
+.preview { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.preview li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 14px; align-items: baseline; }
+.preview li.over { color: var(--neg); }
+.num {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.over .num { background: var(--neg-soft); color: var(--neg); }
+.actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+button.primary {
+  font: inherit; font-weight: 600; cursor: pointer;
+  padding: 10px 22px; border-radius: 9px; border: 1px solid var(--accent);
+  background: var(--accent); color: #ffffff;
+}
+button.primary:hover { filter: brightness(1.1); }
+button.primary:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+.status { font-size: 13.5px; color: var(--muted); }
+.error { border: 1px solid var(--neg); background: var(--neg-soft); color: var(--neg); border-radius: 9px; padding: 10px 14px; font-size: 14px; }
+/* cancel button: secondary look next to "Vyhodnotit" */
+button.secondary {
+  font: inherit; font-weight: 600; cursor: pointer;
+  padding: 10px 18px; border-radius: 9px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink);
+}
+button.secondary:hover { background: #f7f9fc; }
+/* progress bar shown while a request is running (neutral accent colour, not green/red) */
+.progress { height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: var(--accent); border-radius: 3px; }
+@media (prefers-reduced-motion: no-preference) { .progress-fill { transition: width .08s ease-out; } }   /* short: the bar jumps in steps */
+
+/* ---------- shared score visuals ---------- */
+.dbar { position: relative; height: 8px; background: var(--track); border-radius: 4px; }
+.dbar::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--muted); }
+.dbar .fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.dbar .fill.pos { left: 50%; background: var(--pos); }
+.dbar .fill.neg { right: 50%; background: var(--neg); }
+.score { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.score.pos { color: var(--pos); }
+.score.neg { color: var(--neg); }
+.score.zero { color: var(--muted); font-weight: 500; font-size: 13px; }
+/* judge's confidence: small muted label under a passage score, wraps in the narrow column */
+.score .conf { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 400; line-height: 1.3; color: var(--muted); white-space: normal; }
+
+/* ---------- overall ranking ---------- */
+.rank-list { display: flex; flex-direction: column; }
+.rparty { border-top: 1px solid var(--line); }
+.rparty:first-child { border-top: none; }
+.rrow {
+  display: grid; grid-template-columns: 30px minmax(0, 1fr) 150px 64px auto 20px;
+  gap: 4px 14px; align-items: center; padding: 11px 6px; border-radius: 8px;
+  list-style: none; cursor: pointer;
+}
+.rrow::-webkit-details-marker { display: none; }
+.rrow:hover { background: #f7f9fc; }
+.rrow .chev { margin-top: 0; }
+.rparty[open] .chev { transform: rotate(180deg); }
+.pclaims { display: flex; flex-direction: column; gap: 10px; padding: 4px 6px 16px 50px; }
+.pclaim { border-left: 3px solid var(--line); padding: 4px 0 4px 12px; display: flex; flex-direction: column; gap: 6px; }
+.pclaim.pos { border-left-color: var(--pos); }
+.pclaim.neg { border-left-color: var(--neg); }
+.pclaim-head { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; }
+.pclaim-head .claim { font-size: 15px; }
+.ppass { display: grid; grid-template-columns: minmax(0, 1fr) 90px 74px; gap: 4px 12px; align-items: start; }
+.ppass > .dbar { margin-top: 7px; }
+.silent { font-size: 13px; color: var(--muted); font-style: italic; margin: 0; }
+@media (max-width: 640px) {
+  .pclaims { padding-left: 6px; }
+  .ppass { grid-template-columns: minmax(0, 1fr) 74px; }
+  .ppass > .dbar { display: none; }
+}
+.rrow.top .rname { font-size: 17px; }
+.rpos { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rname { font-weight: 600; }
+.rcov { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+.rcov.low { color: var(--neg); }
+.minis { display: flex; gap: 4px; }
+.mini {
+  width: 22px; height: 22px; border-radius: 5px; display: inline-grid; place-items: center;
+  font-size: 11.5px; font-weight: 600; background: var(--track); color: var(--muted);
+}
+.mini.pos { background: var(--pos-soft); color: var(--pos); }
+.mini.neg { background: var(--neg-soft); color: var(--neg); }
+.note { font-size: 12.5px; color: var(--muted); margin: 0; max-width: 80ch; }
+
+@media (max-width: 640px) {
+  .rrow { grid-template-columns: 26px minmax(0, 1fr) 60px; }
+  .rrow .dbar { grid-column: 2 / 4; grid-row: 2; }
+  .rrow .minis { grid-column: 2 / 3; grid-row: 3; }
+  .rrow .chev { grid-column: 3; grid-row: 3; justify-self: end; }
+}
+
+/* ---------- per-claim results ---------- */
+.sec-title { margin-top: 8px; }
+details.qcard { display: block; padding: 0; }
+.qcard > summary { list-style: none; cursor: pointer; padding: 18px 20px; border-radius: 12px; }
+.qcard > summary::-webkit-details-marker { display: none; }
+.qcard > summary:hover { background: #f7f9fc; }
+.qcard[open] > summary { border-bottom: 1px solid var(--line); border-radius: 12px 12px 0 0; }
+.qcard .qrows { padding: 0 20px 8px; }
+.qcard .qrow:first-child { border-top: none; }
+.chev { width: 20px; height: 20px; margin-top: 4px; color: var(--muted); }
+.qcard[open] .chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: no-preference) { .chev { transition: transform .2s ease; } }
+.qhead { display: grid; grid-template-columns: 30px 1fr 20px; gap: 10px; align-items: start; }
+.qhead .num { width: 26px; height: 26px; font-size: 13px; }
+.claim { margin: 0; font-family: var(--font-display); font-size: 18px; font-weight: 600; line-height: 1.35; }
+.qrows { display: flex; flex-direction: column; }
+.qrow {
+  display: grid; grid-template-columns: 26px 150px minmax(0, 1fr) 120px 74px;
+  gap: 4px 14px; align-items: start; padding: 11px 0; border-top: 1px solid var(--line);
+}
+.qrow > .dbar { margin-top: 7px; }
+.qrank { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.qparty { font-weight: 600; font-size: 14px; }
+.quote { margin: 0; font-size: 14px; }
+.quote cite { display: block; font-style: normal; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.quote a { color: var(--accent); }
+.qrow.zero .qparty, .qrow.zero .quote { color: var(--muted); }
+.qcount { font-family: var(--font-body); font-size: 12.5px; font-weight: 400; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .qrow { grid-template-columns: 22px minmax(0, 1fr) 74px; }
+  .qrow .qparty { grid-column: 2; grid-row: 1; }
+  .qrow .score { grid-column: 3; grid-row: 1; }
+  .qrow .quote { grid-column: 2 / 4; grid-row: 2; }
+  .qrow > .dbar { grid-column: 2 / 4; grid-row: 3; margin-top: 2px; }
+}
+
+/* ---------- developer panel ---------- */
+.formula .fx { overflow-x: auto; padding: 4px 0; }
+.formula math { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", math; font-size: 1.1em; }
+.formula dl { display: grid; grid-template-columns: minmax(110px, auto) 1fr; gap: 6px 14px; margin: 0; font-size: 14px; }
+.formula dt { font-family: "Cambria Math", "STIX Two Math", serif; text-align: right; white-space: nowrap; }
+.formula dd { margin: 0; color: var(--ink); }
+@media (max-width: 640px) { .formula dl { grid-template-columns: 1fr; } .formula dt { text-align: left; } .formula math { font-size: .95em; } }   /* wide formulas scroll sideways inside .fx */
+.dev { border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+.dev summary { cursor: pointer; font-weight: 600; }
+.dev p { max-width: 78ch; font-size: 14px; }
+pre { background: #f6f8fa; border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: 12.5px; line-height: 1.45; }
+code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .92em; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .dbar .fill { transition: width .35s ease; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Volební kalkulačka Praha 2026</h1>
+    <p class="lede">Napište, co si myslíte o dění v Praze. Každé tvrzení porovnáme s volebními programy stran a ukážeme, které pasáže programů s ním souhlasí, nebo nesouhlasí.</p>
+    <span class="badge" id="mode">Připojuji…</span>
+  </header>
+
+  <section class="card" aria-labelledby="claims-label">
+    <label class="big" id="claims-label" for="claims">Vaše tvrzení</label>
+    <textarea id="claims" maxlength="500" placeholder="Např.: Praha by měla postavit více obecních bytů / Chci více stromů a zeleně místo parkovišť"></textarea>
+    <div class="input-foot">
+      <span>Oddělte jednotlivá tvrzení lomítkem „/“. Nejvýše 5 tvrzení.</span>
+      <span class="chars" id="chars">0 / 500</span>
+    </div>
+    <ol class="preview" id="preview" aria-label="Rozpoznaná tvrzení"></ol>
+    <div class="actions">
+      <button class="primary" id="run" type="button">Vyhodnotit</button>
+      <button class="secondary" id="cancel" type="button" hidden>Zrušit</button>
+      <span class="status" id="status" role="status"></span>
+    </div>
+    <div class="progress" id="progress" role="progressbar" aria-label="Průběh vyhodnocení" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><div class="progress-fill"></div></div>
+    <div class="error" id="error" hidden></div>
+  </section>
+
+  <div id="results" aria-live="polite"></div>
+
+  <section class="card formula" aria-labelledby="formula-title">
+    <h2 id="formula-title">Jak se počítá skóre</h2>
+    <p class="note">Server vybere započitatelné pasáže (1) a spočítá jejich skóre (2). Prohlížeč z nich určí skóre strany pro každé tvrzení (3) a celkové pořadí (4).</p>
+    <p class="note" id="tau-note" hidden></p>
+    <div class="fx"><math display="block"><mrow>
+      <mtext>(1)</mtext><mspace width="1em"/>
+      <msub><mi>K</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>=</mo>
+      <mo stretchy="false">{</mo><mi>i</mi><mo>∈</mo><msub><mi>R</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>:</mo>
+      <msub><mtext>rel</mtext><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo>
+      <msub><mtext>quote_ok</mtext><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo>
+      <msub><mi>c</mi><mi>i</mi></msub><mo>≥</mo><mi>τ</mi><mo stretchy="false">}</mo>
+    </mrow></math></div>
+    <div class="fx"><math display="block"><mrow>
+      <mtext>(2)</mtext><mspace width="1em"/>
+      <msub><mi>s</mi><mi>i</mi></msub><mo>=</mo><msub><mi>c</mi><mi>i</mi></msub><mo>·</mo><msub><mtext>st</mtext><mi>i</mi></msub><mo>,</mo><mspace width="1.5em"/>
+      <msub><mi>c</mi><mi>i</mi></msub><mo>∈</mo><mo stretchy="false">{</mo><mn>0,25</mn><mo>;</mo><mn>0,5</mn><mo>;</mo><mn>0,75</mn><mo>;</mo><mn>1</mn><mo stretchy="false">}</mo><mo>,</mo><mspace width="1em"/>
+      <msub><mtext>st</mtext><mi>i</mi></msub><mo>∈</mo><mo stretchy="false">{</mo><mn>−1</mn><mo>;</mo><mn>−0,5</mn><mo>;</mo><mn>0</mn><mo>;</mo><mn>0,5</mn><mo>;</mo><mn>1</mn><mo stretchy="false">}</mo>
+    </mrow></math></div>
+    <div class="fx"><math display="block"><mrow>
+      <mtext>(3)</mtext><mspace width="1em"/>
+      <msub><mi>S</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>=</mo>
+      <mrow><mo>{</mo><mtable>
+        <mtr><mtd style="text-align:left"><msub><mi>s</mi><msup><mi>i</mi><mo>*</mo></msup></msub><mo>,</mo><mspace width="0.5em"/><msup><mi>i</mi><mo>*</mo></msup><mo>=</mo><munder><mtext>arg max</mtext><mrow><mi>i</mi><mo>∈</mo><msub><mi>K</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><mo stretchy="false">|</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="false">|</mo></mtd>
+             <mtd style="text-align:left"><mspace width="1em"/><mtext>pokud</mtext><mspace width="0.4em"/><msub><mi>K</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>≠</mo><mi>∅</mi></mtd></mtr>
+        <mtr><mtd style="text-align:left"><mn>0</mn></mtd>
+             <mtd style="text-align:left"><mspace width="1em"/><mtext>jinak (bez postoje)</mtext></mtd></mtr>
+      </mtable></mrow>
+    </mrow></math></div>
+    <div class="fx"><math display="block"><mrow>
+      <mtext>(4)</mtext><mspace width="1em"/>
+      <msub><mtext>Score</mtext><mi>p</mi></msub><mo>=</mo>
+      <mfrac><mn>1</mn><mrow><mo stretchy="false">|</mo><mi>𝒬</mi><mo stretchy="false">|</mo></mrow></mfrac>
+      <munder><mo>∑</mo><mrow><mi>q</mi><mo>∈</mo><mi>𝒬</mi></mrow></munder>
+      <msub><mi>S</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>,</mo><mspace width="1.5em"/>
+      <msub><mtext>Coverage</mtext><mi>p</mi></msub><mo>=</mo>
+      <mo stretchy="false">|</mo><mo stretchy="false">{</mo><mi>q</mi><mo>:</mo><msub><mi>S</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>≠</mo><mn>0</mn><mo stretchy="false">}</mo><mo stretchy="false">|</mo>
+    </mrow></math></div>
+    <dl>
+      <dt>q, 𝒬</dt><dd>jedno vaše tvrzení; všechna vaše tvrzení (|𝒬| = jejich počet, 1 až 5)</dd>
+      <dt>R<sub>p</sub>(q)</dt><dd>pasáže programu strany p nalezené k tvrzení q (5 nejpodobnějších podle embeddingu)</dd>
+      <dt>rel<sub>i</sub>, quote_ok<sub>i</sub></dt><dd>model uznal pasáž za relevantní; citace je doslovně obsažena v pasáži</dd>
+      <dt>c<sub>i</sub>, τ</dt><dd>jistota modelu u pasáže; nejmenší jistota, která se ještě započítá (zvolená týmem na vývojových datech)</dd>
+      <dt>st<sub>i</sub>, s<sub>i</sub></dt><dd>postoj pasáže (−1 odmítá … +1 podporuje); skóre pasáže = jistota × postoj</dd>
+      <dt>K<sub>p</sub>(q)</dt><dd>započtené pasáže strany p k tvrzení q; ostatní se počítají jako „bez postoje“</dd>
+      <dt>S<sub>p</sub>(q)</dt><dd>skóre strany u tvrzení: nejsilnější započtená pasáž (největší |s<sub>i</sub>|)</dd>
+      <dt>Score<sub>p</sub></dt><dd>číslo v celkovém pořadí: průměr přes všechna vaše tvrzení</dd>
+      <dt>Coverage<sub>p</sub></dt><dd>„Doloženo u … tvrzení“: počet tvrzení, kde má strana nenulové skóre</dd>
+    </dl>
+  </section>
+
+  <details class="dev">
+    <summary>Pro vývojáře: jak připojit vlastní pipeline</summary>
+    <p>Stránka při načtení zavolá <code>GET {API_BASE}/api/health</code>. Když odpoví, pošle tvrzení na <code>POST {API_BASE}/api/analyze</code>. Když server neodpoví, běží v ukázkovém režimu se simulovanými výsledky.</p>
+<pre><code>POST /api/analyze
+{ "claims": ["Praha by měla postavit více obecních bytů", "…"] }
+
+→ 200
+{ "queries": [
+    { "claim": "Praha by měla postavit více obecních bytů",
+      "results": [
+        { "party": "Strana X", "quote": "Postavíme 6 000 obecních bytů…",
+          "page": 9, "score": 0.38, "confidence": 0.75, "url": "https://…/program.pdf" }
+      ] }
+  ] }
+
+→ 4xx/5xx   { "error": "Text chyby pro uživatele" }</code></pre>
+    <p><code>score</code> je číslo od −1 (program tvrzení odporuje) přes 0 (nevyjadřuje se) po +1 (podporuje). <code>confidence</code> je nepovinné (1 / 0,75 / 0,5 / 0,25): jak si je model u pasáže jistý. <code>score</code> už jistotu obsahuje (score = jistota × postoj), stránka ji jen zobrazuje. <code>url</code> je nepovinné. Celkové pořadí se počítá v prohlížeči. Pro každou stranu a tvrzení se vezme pasáž s nejsilnějším skóre (největší absolutní hodnota), strana bez pasáže dostane 0 a výsledkem je průměr přes tvrzení. Pokud server vrátí vlastní pole <code>ranking</code>, použije se místo toho.</p>
+  </details>
+</div>
+
+<script>
+// =====================================================================
+// CONFIG: "" = the same server that serves this page (python server.py).
+// Put a full URL here only if the page is hosted somewhere else.
+// =====================================================================
+const CONFIG = { API_BASE: "" };
+const LIMITS = { maxChars: 500, maxClaims: 5 };
+
+/*CORE_START*/
+// ---------- input parsing ----------
+function parseClaims(text) {
+  return text.split("/").map(s => s.trim()).filter(Boolean);
+}
+
+// ---------- overall ranking ----------
+// For each party and claim: take its strongest passage (largest |score|), 0 if none.
+// Party score = mean over claims. Coverage = claims where the party has a non-zero score.
+function aggregate(queries, parties) {
+  const names = parties.length ? parties : [...new Set(queries.flatMap(q => q.results.map(r => r.party)))];
+  return names.map(name => {
+    const perClaim = queries.map(q => {
+      let best = 0;
+      for (const r of q.results) {
+        if (r.party === name && Math.abs(r.score) > Math.abs(best)) best = r.score;
+      }
+      return best;
+    });
+    const score = perClaim.reduce((a, b) => a + b, 0) / perClaim.length;
+    return { party: name, score, perClaim, coverage: perClaim.filter(s => s !== 0).length };
+  }).sort((a, b) => b.score - a.score || b.coverage - a.coverage || a.party.localeCompare(b.party, "cs"));
+}
+
+// ---------- DEMO ONLY: fictional parties, fictional passages, simulated scoring ----------
+// The real app replaces all of this with your embedding + LLM pipeline on the server.
+const DEMO_PARTIES = ["Demo strana A", "Demo strana B", "Demo strana C", "Demo strana D", "Demo strana E", "Demo strana F"];
+// lean: +1 = passage is FOR the policy it talks about, -1 = AGAINST it
+const DEMO_PASSAGES = [
+  { party: "Demo strana A", page: 4,  lean: 1,  text: "Zóny placeného stání zavedeme na celém území Prahy." },
+  { party: "Demo strana A", page: 9,  lean: 1,  text: "Postavíme 6 000 nových obecních bytů do konce roku 2030 a nabídneme je za dostupné nájemné." },
+  { party: "Demo strana A", page: 14, lean: 1,  text: "Nevyužitá parkoviště proměníme v zelené plochy se stromy a lavičkami." },
+  { party: "Demo strana A", page: 21, lean: 1,  text: "Zveřejníme všechny smlouvy města bez ohledu na jejich hodnotu." },
+  { party: "Demo strana B", page: 3,  lean: -1, text: "Odmítáme plošné zavádění zón placeného stání do okrajových částí." },
+  { party: "Demo strana B", page: 6,  lean: -1, text: "Parkovací místa v rezidenčních čtvrtích nebudeme rušit ani nahrazovat zelení." },
+  { party: "Demo strana B", page: 8,  lean: 1,  text: "Rozšíříme kamerový systém v rizikových lokalitách a v metru." },
+  { party: "Demo strana B", page: 11, lean: 1,  text: "Smlouvy nad 50 000 Kč budou dostupné v otevřeném registru." },
+  { party: "Demo strana C", page: 2,  lean: 1,  text: "Město musí každý rok postavit nejméně tisíc obecních bytů." },
+  { party: "Demo strana C", page: 2,  lean: 1,  text: "Omezíme krátkodobé pronájmy, které vytlačují obyvatele z centra." },
+  { party: "Demo strana C", page: 7,  lean: -1, text: "Místo dalších kamer chceme více strážníků v ulicích." },
+  { party: "Demo strana C", page: 9,  lean: 1,  text: "Kulturní dotace zvýšíme, zejména pro komunitní a nezávislé projekty." },
+  { party: "Demo strana D", page: 12, lean: 1,  text: "Placené stání zavedeme všude, kde chybí stání pro rezidenty." },
+  { party: "Demo strana D", page: 15, lean: -1, text: "Výstavbu obecních bytů přenecháme soukromým investorům, město ji nebude financovat." },
+  { party: "Demo strana D", page: 19, lean: 1,  text: "Podpoříme moderní kamerový dohled napojený na operační středisko." },
+  { party: "Demo strana D", page: 22, lean: -1, text: "Dotace do kultury nebudeme navyšovat, rozpočet musí být vyrovnaný." },
+  { party: "Demo strana E", page: 6,  lean: 1,  text: "Zóny placeného stání musí platit v celé Praze." },
+  { party: "Demo strana E", page: 3,  lean: 1,  text: "Každé nevyužité parkoviště je příležitostí pro nové stromy." },
+  { party: "Demo strana E", page: 11, lean: 1,  text: "Obecní bytový fond zvětšíme o 5 000 bytů." },
+  { party: "Demo strana E", page: 17, lean: -1, text: "Další rozšiřování kamerového dohledu odmítáme." },
+  { party: "Demo strana F", page: 1,  lean: 1,  text: "Bezpečnost: více kamer, více policie." },
+  { party: "Demo strana F", page: 1,  lean: 1,  text: "Transparentní radnice: všechny smlouvy online." }
+];
+const DEMO_STOP = new Set(["město", "města", "městě", "praha", "prahy", "praze", "měla", "mělo", "měly", "chci", "více", "místo", "které", "který", "bude", "budou", "nebo", "také", "aby", "jsou"]);
+const DEMO_NEG = new Set(["nemělo", "neměla", "neměl", "neměly", "nechci", "nesouhlasím", "nepodporuji", "odmítám", "proti", "zrušit"]);
+
+// crude Czech "stemming": first 4 letters (3 for 4-letter words)
+function demoStems(text) {
+  const words = (text.toLowerCase().match(/\p{L}+/gu) || []).filter(w => w.length >= 4 && !DEMO_STOP.has(w));
+  return new Set(words.map(w => (w.length === 4 ? w.slice(0, 3) : w.slice(0, 4))));
+}
+
+// Simulates: retrieve 10 closest passages -> score each -1..1
+function demoScore(claims) {
+  return {
+    queries: claims.map(claim => {
+      const cs = demoStems(claim);
+      const words = claim.toLowerCase().match(/\p{L}+/gu) || [];
+      const flip = words.some(w => DEMO_NEG.has(w)) ? -1 : 1;
+      const hits = DEMO_PASSAGES
+        .map((p, i) => ({ p, i, overlap: [...demoStems(p.text)].filter(s => cs.has(s)).length }))
+        .sort((a, b) => b.overlap - a.overlap || a.i - b.i)
+        .slice(0, 10);
+      const results = hits.map(({ p, overlap }) => {
+        // simulated judge confidence: more shared words = more certain; no shared word = no position
+        const confidence = overlap >= 3 ? 1 : overlap === 2 ? 0.75 : overlap === 1 ? 0.5 : null;
+        return {
+          party: p.party, quote: p.text, page: p.page, confidence,
+          score: confidence === null ? 0 : Math.round(flip * p.lean * confidence * 100) / 100 || 0
+        };
+      }).sort((a, b) => b.score - a.score);
+      return { claim, results };
+    })
+  };
+}
+/*CORE_END*/
+
+const DEMO_EXAMPLE = "Praha by měla postavit více obecních bytů / Chci více stromů a zeleně místo parkovišť / Město by mělo rozšířit kamerový dohled ve veřejném prostoru";
+
+// ---------- state ----------
+let MODE = "demo";       // "demo" | "live"
+let PARTIES = [];
+let controller = null;   // AbortController of the running request; null = idle
+let progressTimer = null;
+let hideTimer = null;
+
+// Rough durations, used only to pace the progress bar (not real progress from the server).
+// Adjust EXPECTED_MS_PER_CLAIM after measuring real Colab run times.
+const EXPECTED_MS_PER_CLAIM = 12000;
+const DEMO_DELAY_MS = 600;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = s => s.toLocaleString("cs-CZ", { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: "exceptZero" });
+const sign = s => (s > 0 ? "pos" : s < 0 ? "neg" : "zero");
+
+// Judge's confidence per passage. Optional field: missing, null or an unknown value shows nothing.
+// Display only: the score already includes it (score = confidence × stance).
+const CONF_LABEL = { 1: "jistota: výslovně", 0.75: "jistota: spíše jisté", 0.5: "jistota: nejisté", 0.25: "jistota: odhad" };
+const CONF_TITLE = {
+  1: "Úryvek se k tvrzení vyjadřuje výslovně a postoj je jednoznačný.",
+  0.75: "Model si je poměrně jistý, ale formulace je obecnější nebo nepřímá.",
+  0.5: "Model si není jistý: úryvek se tvrzení jen dotýká, nebo se dá číst dvojím způsobem.",
+  0.25: "Spíše odhad modelu."
+};
+function confLabel(c) {
+  if (c === null || c === undefined || c === "") return "";
+  const k = Number(c);
+  if (!(k in CONF_LABEL)) return "";
+  return `<span class="conf" title="${esc(CONF_TITLE[k])}">${esc(CONF_LABEL[k])}</span>`;
+}
+
+// ---------- talking to the server ----------
+// Threshold tau from /api/health; a missing or non-numeric value keeps the sentence hidden.
+function showTau(tau) {
+  const note = $("tau-note");
+  const t = typeof tau === "string" && tau.trim() !== "" ? Number(tau.replace(",", ".")) : tau;
+  if (typeof t !== "number" || !Number.isFinite(t)) { note.hidden = true; return; }
+  note.textContent = "Pasáže s jistotou pod τ = " + t.toLocaleString("cs-CZ") + " se nepočítají.";
+  note.hidden = false;
+}
+
+async function detectMode() {
+  try {
+    const r = await fetch(CONFIG.API_BASE + "/api/health", { cache: "no-store" });
+    const h = await r.json();
+    if (!r.ok || !h.ok) throw new Error("health failed");
+    MODE = "live";
+    PARTIES = h.parties || [];
+    showTau(h.tau);
+    $("mode").className = "badge";
+    $("mode").textContent = "Připojeno k API" + (h.model ? " · model " + h.model : "") + (PARTIES.length ? " · " + PARTIES.length + " politických stran" : "");
+  } catch (e) {
+    MODE = "demo";
+    PARTIES = DEMO_PARTIES;
+    $("mode").className = "badge demo";
+    $("mode").textContent = "Ukázka: fiktivní strany, simulované skóre bez modelu";
+  }
+}
+
+// `signal` comes from an AbortController; aborting it cancels the request.
+async function analyze(claims, signal) {
+  if (MODE === "demo") {
+    return new Promise((res, rej) => {
+      const timer = setTimeout(() => res(demoScore(claims)), DEMO_DELAY_MS);
+      signal.addEventListener("abort", () => { clearTimeout(timer); rej(new DOMException("Zrušeno", "AbortError")); });
+    });
+  }
+  const r = await fetch(CONFIG.API_BASE + "/api/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ claims }),   // request body unchanged
+    signal
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || "Server vrátil chybu " + r.status + ".");
+  if (!Array.isArray(data.queries)) throw new Error("Odpověď serveru nemá pole „queries“.");
+  return data;
+}
+
+// ---------- input ----------
+function checkInput() {
+  const text = $("claims").value;
+  const claims = parseClaims(text);
+  const chars = $("chars");
+  chars.textContent = text.length + " / " + LIMITS.maxChars;
+  chars.classList.toggle("full", text.length >= LIMITS.maxChars);
+
+  $("preview").innerHTML = claims.map((c, i) =>
+    `<li class="${i >= LIMITS.maxClaims ? "over" : ""}"><span class="num">${i + 1}</span><span>${esc(c)}</span></li>`
+  ).join("");
+
+  let problem = "";
+  if (claims.length === 0) problem = "Napište alespoň jedno tvrzení.";
+  else if (claims.length > LIMITS.maxClaims) problem = "Máte " + claims.length + " tvrzení, maximum je " + LIMITS.maxClaims + ". Odeberte nebo spojte některá.";
+  $("run").disabled = Boolean(problem) || controller !== null;   // also disabled while a request runs
+  $("status").textContent = claims.length > LIMITS.maxClaims ? problem : "";
+  return problem ? null : claims;
+}
+
+// ---------- progress bar ----------
+// Progressive timing: 0 -> 70 % in the first 30 % of the expected time,
+// then it slows down and creeps towards 95 %. 100 % only when the answer arrives.
+function startProgress(expectedMs) {
+  const bar = $("progress");
+  const fill = bar.firstElementChild;
+  const t0 = Date.now();
+  clearTimeout(hideTimer);
+  bar.hidden = false;
+  const tick = () => {
+    const t = (Date.now() - t0) / expectedMs;            // 0 = start, 1 = expected end
+    const p = t < 0.3
+      ? 70 * t / 0.3                                      // fast phase
+      : 70 + 25 * (1 - Math.exp(-(t - 0.3) / 0.7));       // slow phase, never above 95
+    fill.style.width = p.toFixed(1) + "%";
+    bar.setAttribute("aria-valuenow", Math.round(p));
+    progressTimer = setTimeout(tick, 250 + Math.random() * 900);   // irregular pause = choppy steps
+  };
+  tick();
+}
+
+// done = true: jump to 100 % and hide shortly after; false (error/cancel): hide at once.
+function stopProgress(done) {
+  clearTimeout(progressTimer);
+  const bar = $("progress");
+  const hide = () => { bar.hidden = true; bar.firstElementChild.style.width = "0%"; bar.setAttribute("aria-valuenow", 0); };
+  if (done) {
+    bar.firstElementChild.style.width = "100%";
+    bar.setAttribute("aria-valuenow", 100);
+    hideTimer = setTimeout(hide, 400);
+  } else {
+    hide();
+  }
+}
+
+async function run() {
+  if (controller) return;                 // a request is already running (e.g. Ctrl+Enter twice)
+  const claims = checkInput();
+  if (!claims) return;
+  controller = new AbortController();
+  let endMsg = "";                        // status text to show after the run ends
+  $("error").hidden = true;
+  $("run").disabled = true;
+  $("run").textContent = "Vyhodnocuji…";
+  $("cancel").hidden = false;
+  $("status").textContent = MODE === "live"
+    ? "Hledám pasáže a hodnotím je modelem. U " + claims.length + " tvrzení to může trvat i minutu."
+    : "Simuluji vyhodnocení…";
+  startProgress(MODE === "live" ? EXPECTED_MS_PER_CLAIM * claims.length : DEMO_DELAY_MS);
+  try {
+    const data = await analyze(claims, controller.signal);
+    stopProgress(true);
+    renderResults(data);
+  } catch (e) {
+    stopProgress(false);
+    if (controller.signal.aborted) {
+      endMsg = "Vyhodnocení bylo zrušeno.";   // cancelled by the user: not an error, previous results stay
+    } else {
+      $("error").textContent = e.message;
+      $("error").hidden = false;
+    }
+  } finally {
+    controller = null;
+    $("cancel").hidden = true;
+    $("run").textContent = "Vyhodnotit";
+    checkInput();                         // re-enables the button and resets the status line
+    if (endMsg) $("status").textContent = endMsg;
+  }
+}
+
+function cancelRun() {
+  if (controller) controller.abort();
+}
+
+// ---------- results ----------
+function dbar(s) {
+  return `<span class="dbar" aria-hidden="true"><span class="fill ${s >= 0 ? "pos" : "neg"}" style="width:${Math.abs(s) * 50}%"></span></span>`;
+}
+
+// Party dropdown: the user's claims ranked by this party's score, with its passages for each claim.
+// rankRow = this party's entry in the ranking (from the server, or from aggregate() as a fallback).
+function renderPartyClaims(rankRow, queries) {
+  const party = rankRow.party;
+  return queries
+    .map((q, qi) => {
+      const mine = q.results.filter(r => r.party === party);   // already sorted by score
+      let best = rankRow.perClaim ? rankRow.perClaim[qi] : undefined;   // the score the ranking used
+      if (typeof best !== "number") {                             // no perClaim: same rule as aggregate()
+        best = 0;
+        for (const r of mine) if (Math.abs(r.score) > Math.abs(best)) best = r.score;
+      }
+      const conflict = (rankRow.flags || [])[qi] === "contradiction";
+      if (conflict) best = 0;                                     // sorted and coloured like "no position"
+      return { q, qi, mine, best, conflict };
+    })
+    .sort((a, b) => b.best - a.best || a.qi - b.qi)
+    .map(({ q, qi, mine, best, conflict }) => {
+      const passages = mine.filter(r => r.score !== 0).map(r => {
+        const page = r.page ? "s. " + esc(r.page) : "";
+        const link = r.url ? `${page ? " · " : ""}<a href="${esc(r.url)}${r.page ? "#page=" + esc(r.page) : ""}" target="_blank" rel="noopener">program</a>` : "";
+        return `
+          <div class="ppass">
+            <p class="quote">„${esc(r.quote)}“${page || link ? `<cite>${page}${link}</cite>` : ""}</p>
+            ${dbar(r.score)}
+            <span class="score ${sign(r.score)}">${fmt(r.score)}${confLabel(r.confidence)}</span>
+          </div>`;
+      }).join("");
+      return `
+        <div class="pclaim ${sign(best)}">
+          <div class="pclaim-head"><span class="num">${qi + 1}</span>
+            <p class="claim">${esc(q.claim)}</p>
+            <span class="score ${sign(best)}">${conflict ? "rozporné (pasáže si odporují)" : best === 0 ? "bez postoje" : fmt(best)}</span></div>
+          ${passages || '<p class="silent">V nalezených pasážích se strana k tomuto tvrzení nevyjadřuje.</p>'}
+        </div>`;
+    }).join("");
+}
+
+function renderResults(data) {
+  const queries = data.queries;
+  const ranking = data.ranking || aggregate(queries, PARTIES);
+
+  const rankRows = ranking.map((r, i) => {
+    const cov = r.coverage ?? 0;
+    const low = cov / queries.length < 0.5;
+    const flags = r.flags || [];                        // "none" / "ok" / "contradiction" per claim (server only)
+    const minis = (r.perClaim || []).map((s, j) => flags[j] === "contradiction"
+      ? `<span class="mini zero" title="Tvrzení ${j + 1}: rozporné">${j + 1}</span>`
+      : `<span class="mini ${sign(s)}" title="Tvrzení ${j + 1}: ${s === 0 ? "bez postoje" : fmt(s)}">${j + 1}</span>`).join("");
+    return `
+      <details class="rparty">
+        <summary class="rrow ${i === 0 ? "top" : ""}">
+          <span class="rpos">${i + 1}.</span>
+          <span class="rname">${esc(r.party)}
+            <span class="rcov ${low ? "low" : ""}">Doloženo u ${cov} z ${queries.length} tvrzení${low ? " · málo podkladů" : ""}</span></span>
+          ${dbar(r.score)}
+          <span class="score ${sign(r.score)}">${fmt(r.score)}</span>
+          <span class="minis">${minis}</span>
+          <svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <div class="pclaims">${renderPartyClaims(r, queries)}</div>
+      </details>`;
+  }).join("");
+
+  const queryCards = queries.map((q, qi) => {
+    const rows = q.results.map((r, ri) => {
+      const s = Number(r.score) || 0;
+      const page = r.page ? "s. " + esc(r.page) : "";
+      const link = r.url ? `${page ? " · " : ""}<a href="${esc(r.url)}${r.page ? "#page=" + esc(r.page) : ""}" target="_blank" rel="noopener">program</a>` : "";
+      return `
+        <div class="qrow ${sign(s)}">
+          <span class="qrank">${ri + 1}.</span>
+          <span class="qparty">${esc(r.party)}</span>
+          <p class="quote">„${esc(r.quote)}“${page || link ? `<cite>${page}${link}</cite>` : ""}</p>
+          ${dbar(s)}
+          <span class="score ${sign(s)}">${s === 0 ? "bez postoje" : fmt(s)}${confLabel(r.confidence)}</span>
+        </div>`;
+    }).join("");
+    // one-line summary shown while the dropdown is closed
+    const nPos = q.results.filter(r => r.score > 0).length;
+    const nNeg = q.results.filter(r => r.score < 0).length;
+    const best = q.results[0];
+    const bestTxt = best && best.score > 0 ? ` · nejvíc souhlasí ${esc(best.party)} (${fmt(best.score)})` : "";
+    return `
+      <details class="card qcard">
+        <summary class="qhead"><span class="num">${qi + 1}</span>
+          <div><p class="claim">${esc(q.claim)}</p>
+            <span class="qcount">${nPos} pasáží souhlasí · ${nNeg} nesouhlasí · ${q.results.length - nPos - nNeg} bez postoje${bestTxt}</span></div>
+          <svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <div class="qrows">${rows}</div>
+      </details>`;
+  }).join("");
+
+  $("results").innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <section class="card">
+        <h2>Celkové pořadí stran</h2>
+        <div class="rank-list">${rankRows}</div>
+        <p class="note">Skóre od −1 do +1 je průměr přes vaše tvrzení. U každého tvrzení se počítá nejsilnější pasáž strany a strana bez pasáže dostane 0. Skóre každé pasáže je její postoj vynásobený tím, jak si je model jistý (postoj × jistota); pasáže, u kterých si model nebyl dost jistý, se nezapočítávají. Čtverečky ukazují jednotlivá tvrzení: zelená = program souhlasí, červená = nesouhlasí, šedá = nevyjadřuje se. Výsledek porovnává jen texty programů a nedoporučuje, koho volit.</p>
+      </section>
+      <h2 class="sec-title">Výsledky podle tvrzení <span class="qcount">· kliknutím rozbalíte pasáže</span></h2>
+      ${queryCards}
+    </div>`;
+}
+
+// ---------- start ----------
+$("claims").addEventListener("input", checkInput);
+$("run").addEventListener("click", run);
+$("cancel").addEventListener("click", cancelRun);
+$("claims").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
+
+(async function init() {
+  await detectMode();
+  $("claims").value = DEMO_EXAMPLE;
+  checkInput();
+  if (MODE === "demo") run();      // open in a working state
+})();
+</script>
+</body>
+</html>

@@ -18,7 +18,48 @@ cp .env.example .env               # then put your LiteLLM key into .env
 ## Phase 1 probe (temporary)
 `python scripts/probe.py` makes one embedding call and one chat call and prints `OK` or `FAIL` for each.
 
-## Run the app locally: TODO (Phase 4)
+## Run the app locally
+```bash
+python app/server.py        # http://127.0.0.1:5000
+```
+Flask's own server, for development only. With `APP_PASSWORD` empty in `.env` there is no
+password; set it and the browser asks for one (any user name, that password).
+
+Until the notebook's `E0` cell has been run and `app/data` filled in, `/api/health` answers
+`{"ok": false}` and the page runs in **demo mode** with fictional parties. That is deliberate:
+a missing export should not produce a broken page, and Render's health check must stay green.
+
+On Windows you cannot run the production command locally — `gunicorn` needs `fcntl` and is
+POSIX-only, even though it installs. Test with `python app/server.py` here and rely on
+Render for the gunicorn path.
+
+### What the two endpoints answer
+| Route | Password? | Notes |
+|---|---|---|
+| `GET /` | yes | serves `app/index.html` |
+| `GET /api/health` | **no** | Render's health check cannot log in. Returns only model, parties, `tau`, `prompt_version` — never a path or any detail about the server |
+| `POST /api/analyze` | yes | 1–5 claims, ≤ 500 characters joined; 400 / 429 / 500 with `{"error": "<Czech>"}` |
+
+### Abuse limits
+- 3 analyses per IP per minute, and a cap of 2000 judge prompts per UTC day.
+- Both counters live in this process's memory, so a restart resets them. Render restarts a
+  free service whenever it likes, so treat the daily cap as a brake on accidents, not a
+  guarantee against a determined abuser.
+- The client address comes from `X-Forwarded-For`, which is only trustworthy because Render's
+  proxy overwrites it. Do not run this open to the internet without such a proxy.
+
+### Bugs fixed here (Failure Journal)
+| # | Was | Effect |
+|---|---|---|
+| S1 | the validation branch returned `queries` before it was assigned | 0 or 6 claims raised `NameError` → HTML 500 instead of a Czech 400 |
+| S2 | the success path returned no `ranking` | `index.html` fell back to its own `aggregate()`: no contradiction rule, different coverage. **Users were not seeing the evaluated ranking rule.** Fixing it restores the evaluated method; it is not a change of method |
+| S3 | `TAU`, `PROMPT_VERSION`, `rank_parties` only existed after a notebook cell injected them | the file could not run or be tested on its own; it now imports `pipeline` |
+| S4 | `debug=True` | an interactive console on a public host |
+
+One more, found while testing this phase: `/api/health` first returned the `DataMissing`
+reason verbatim, which included the absolute path of `app_config.json` — to anyone, with no
+password, since that endpoint is open on purpose. It now returns a generic Czech sentence and
+logs the detail. `tests/test_api.py::test_health_never_discloses_a_filesystem_path` guards it.
 
 ## Tests
 ```bash
