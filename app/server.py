@@ -50,6 +50,12 @@ _lock = threading.Lock()
 _hits: dict[str, deque] = {}                        # ip -> timestamps of recent analyses
 _day = {"date": None, "baseline": 0}                # for the daily judge-call cap
 
+# Load the committed caches at import, which is once per gunicorn worker. Render's filesystem
+# is ephemeral and a free service spins down after 15 idle minutes, so without this the first
+# analysis after a quiet spell pays the spin-up and a full set of live judge calls. A no-op
+# when the files are absent, so the app still starts before the notebook has been exported.
+pipeline.warm_start()
+
 
 # ------------------------------------------------------------------ password
 

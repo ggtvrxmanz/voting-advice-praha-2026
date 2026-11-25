@@ -102,7 +102,11 @@ production uses.
 | File | What it covers | Needs `app/data`? |
 |---|---|---|
 | `tests/test_pipeline.py` | `parse`, `passage_score`, `claim_score`, `rank_parties` | no |
+| `tests/test_api.py` | health, the analyze contract, 400 / 429 / 500, the password | no |
+| `tests/test_warm_start.py` | loading the committed caches, and failing safe | no |
 | `tests/test_parity.py` | `score_claim` against the notebook's own answers | **yes** |
+
+Current state: **70 passed, 9 skipped** — the 9 are `test_parity.py`, waiting on the export.
 
 `test_parity.py` skips with a message naming the missing files until the notebook's `E0`
 cell has been run and its output copied in. It is the test that proves this code reproduces
@@ -139,6 +143,8 @@ two cannot drift apart. The last cell of `notebooks/Communal_Party_Election_anal
    | `app/data/passages.csv` | the 696 non-noise passages (`passage_id, party, page, text`), in `df_clust` order |
    | `app/data/passage_emb.npy` | `E_qwen`, float32, **same row order** as `passages.csv` |
    | `app/data/app_config.json` | model, params, prompt text, `k_stance`, `tau`, corpus version, SHA-256 of the two files above |
+   | `app/data/app_stance_cache.jsonl` | every cached judge answer, for the warm start |
+   | `app/data/query_cache.json` | their query vectors, for the warm start |
    | `tests/fixtures/parity_expected.json` | 3 claims with their judge answers and the expected `score_claim` rows |
    | `tests/fixtures/parity_query_vectors.npz` | the query vectors those 3 claims used |
 
@@ -277,15 +283,33 @@ These need a live service with `app/data` exported, so they are open:
 Expected memory: `passage_emb.npy` is 696 × 2560 float32 ≈ **6.8 MB**, so the matrix is not
 the risk; the Python process and `openai`'s dependencies dominate. Measure rather than assume.
 
-### Known gap: no warm start after a spin-down
-`APP_STATE.md` §8.4 lists two optional exports we have **not** implemented:
-`query_cache.json` and `app_stance_cache.jsonl`, committed so the demo claims answer from
-cache instead of calling the model. Without them, every spin-down makes the first demo
-analysis slow and expensive, which is exactly the wrong moment at a presentation.
+### Warm start after a spin-down
+Because the filesystem is ephemeral, both caches are empty again after every spin-down,
+restart and deploy. Without help, the first analysis of a session pays the ~1 minute spin-up
+**and** a full set of live judge calls — up to 51 per claim. That is the worst possible
+moment for it, a demo being the obvious example.
 
-Adding them is a small change to the `E0` cell plus a loader in `pipeline.py` that fills
-`QUERY_CACHE` and `JUDGE_CACHE` at startup from committed files. Worth doing before any live
-demo. Not done here because it was not needed to get the app deployed.
+So `E0` also exports every cached answer to `app/data/app_stance_cache.jsonl` and their query
+vectors to `app/data/query_cache.json`, both committed. `pipeline.warm_start()` loads them
+when `server.py` is imported, which is once per gunicorn worker. A claim that was run in the
+notebook then answers from cache on the deployed app, with no model call at all.
+
+Two properties make this safe to commit rather than something to worry about:
+
+- **A stale file cannot give a wrong answer.** Every key is a hash of the configuration, so
+  if the model, prompt version, parameters or instruction prefix change, the keys no longer
+  match, the entries are simply never found, and the app calls the model as usual. The file
+  becomes useless, never misleading. `test_a_stale_file_is_useless_but_never_wrong` pins this.
+- **A corrupt file cannot take the app down.** The app works perfectly with cold caches, so a
+  damaged file is logged and skipped. One bad line in the `.jsonl` does not lose the others.
+
+Entries already in memory always win, so a live answer or a test's own fixture is never
+overwritten by a committed file.
+
+These files contain judge answers and query vectors for the claims you have run — no key, and
+nothing the app does not already serve. They do grow with every claim you analyse in the
+notebook, so if the repository gets uncomfortably large, re-export from a trimmed cache
+rather than committing thousands of answers.
 
 ## Team rules
 - Work on a branch, open a pull request, one reviewer approves, then merge. `main` deploys automatically.
