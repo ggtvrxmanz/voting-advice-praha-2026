@@ -1,0 +1,1637 @@
+{
+  "config": {
+    "embed_model": "qwen3-embedding:4b",
+    "llm_model": "Qwen3.8-27B",
+    "llm_params": {
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens": 1024
+    },
+    "prompt_version": "v3",
+    "prompt_cs": "Jsi pečlivý analytik volebních programů. Dostaneš tezi a úryvek z programu jedné strany.\n1) \"relevant\": true jen tehdy, když se úryvek vyjadřuje přímo k této tezi (nestačí stejné téma). Jinak false.\n2) \"stance\" (jen když relevant je true, jinak null), jedna z hodnot:\n    1 = úryvek tezi jasně podporuje nebo slibuje přesně to;\n  0.5 = podporuje ji částečně, podmíněně nebo slabě (např. \"prověříme\", \"budeme usilovat\");\n    0 = vyjadřuje se k ní, ale smíšeně nebo nerozhodně;\n -0.5 = je k ní spíše skeptický nebo ji odmítá jen zčásti;\n   -1 = tezi jasně odmítá nebo slibuje opak.\n3) \"quote\": doslovná citace z úryvku (nejvýše 30 slov), která hodnocení dokládá; prázdný řetězec, když relevant je false.\n4) \"confidence\" (jen když relevant je true, jinak null): jak jistě úryvek k tezi patří a jak jistý je postoj, jedna z hodnot:\n     1 = úryvek se k tezi vyjadřuje výslovně a postoj je jednoznačný;\n  0.75 = spíše jisté, ale formulace je obecnější nebo nepřímá;\n   0.5 = nejisté, úryvek se tezi jen dotýká nebo jde vyložit dvojím způsobem;\n  0.25 = spíše odhad.\nOdpověz pouze jedním objektem JSON: {\"relevant\": true/false, \"stance\": 1/0.5/0/-0.5/-1/null, \"confidence\": 1/0.75/0.5/0.25/null, \"quote\": \"...\"}\n\nTeze: <<QUERY>>\nÚryvek: <<PASSAGE>>",
+    "instr": "Instruct: Given a Czech statement about city politics, retrieve programme passages that discuss it\nQuery: ",
+    "k_stance": 5,
+    "tau": 0,
+    "corpus_version": "v5",
+    "n_passages": 696,
+    "emb_dim": 2560,
+    "parties": [
+      "ano",
+      "jsme_praha",
+      "levice",
+      "pirati",
+      "prahasobe",
+      "spd",
+      "spojena_levice",
+      "spolu-portlik",
+      "starostove",
+      "voluntia"
+    ],
+    "exported_at": "2026-11-25T21:22:40+00:00",
+    "sha256_passages_csv": "1782210172df03ea6819aafbca138a4b5bd94d3bddf1a45cd6ca25e706f42694",
+    "sha256_passage_emb_npy": "4f11041b54cf8caf7ec676d0905e9a633bf26663cd84bd233b1b180843a07c02"
+  },
+  "claims": [
+    {
+      "claim": "Praha by měla dostavět metro D.",
+      "query_cache_key": "73fc7de78e9ec46650eb3f685305fd28f9d80c68",
+      "judge_answers": [
+        {
+          "key": "4219ade2434943c8de5bf4e56c5c94cd4911ab5a",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "ano_004_006",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "8ed67293fb432bdadfdfb5c1064c3d55417b8c3d",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "ano_011_008",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "db03a1a8cafc7c3992ff09857e09f63145c330dc",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "ano_011_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e4947b59f0660d0d6f5eb89b9ee0275a1c5cd68f",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "ano_011_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "de363009a9af4328aeb7fa9b59641bb10b03030b",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "ano_004_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b514e32efa05af4263c0147296d5f666fa8c3bc5",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "jsme_praha_004_007",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "dfe193c1d52b491aa0dec52c127f6f702b0aa4d0",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "jsme_praha_004_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "ea32e91c79508278f902626db0291df2a0a4cac6",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "jsme_praha_004_011",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "a74e5e50b7349e3f5187cf15cb86375cd8ac94ad",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "jsme_praha_001_010",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e05be497be5c1e3c0299b0631c119e9626fd3ae5",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "jsme_praha_004_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "2c6ad3e6dce9eab3505b93107b9d9919b0205a49",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "levice_002_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "a9f9d7f6e0179f9ce734dbb44be00fca0aa04781",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "levice_002_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "3c58169024bd793e2db6aa6f888aecbb188ee532",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "levice_007_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "3148ab8d9e06eb393577736c5fdeaf779e952c35",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "levice_002_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "7b15021b07a795e2bab9c298f669c1954192130c",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "levice_008_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "11b18582f248234a29e41316fb314d26f0d732b1",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "pirati_001_061",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "cf48624ab043e67aa3c4766cc90f263971d41719",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "pirati_001_048",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 1.0,
+          "quote": "Pokračování výstavby metra D v úseku Pankrác – Písnice.",
+          "quote_ok": true
+        },
+        {
+          "key": "de86ce4ff46f513e084e7f16d1876c8fa3628d4a",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "pirati_001_062",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "eb76e6ce831198d57bf2153504975e1352611ed4",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "pirati_001_049",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0d1180eb5ad3f9c43e6531b68bf965be1b79d1f4",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "pirati_001_097",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "3765422b4a070de4e4b8edcb5ed5dd7932ce626d",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "prahasobe_detail_001",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 1.0,
+          "quote": "ZAČALI JSME STAVĚT METRO D – A STAVBU DOTÁHNEME!",
+          "quote_ok": true
+        },
+        {
+          "key": "f0cf4ad8be5bd3e150976d867eeb55188bd67908",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "prahasobe_roadmap_007",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "df598d8ec5bb9ce2952c9d8fb0b1bf9ae339b52b",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "prahasobe_roadmap_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b74eec78bf990bd9247691c5741ec1ddb9505c16",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "prahasobe_detail_011",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "779de713ce98bff7f8e570fed0913a1a8cc23f21",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "prahasobe_detail_055",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "ab59d6ca0ed0541ed2b5565cfa81a1a8cda4943b",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spd_001_012",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "dabc2361bb31f45a24377c892e2d92692dd93d3d",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spd_001_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "8cf9cdcd6473597111b337ca3380e04f4d8a374f",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spd_001_008",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "75bf99507bc852c415e24e0c9ac1ee65c5bee874",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spd_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "76c0e77e8248c807224a5db0836615dc68616555",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spd_001_009",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "55c2739510992357c90f02b255adc7045b517b40",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spojena_levice_002_001",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 1.0,
+          "quote": "Metro D – Dokončení trasy Jih – Pankrác – Nusle – nám. Míru – hl. nádraží – Žižkov – Vysočany.",
+          "quote_ok": true
+        },
+        {
+          "key": "83c43d51a7743063429adb5b48262a346c758eaa",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spojena_levice_002_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "6c474bf087b89212afdf1ea962a801a23f00a25b",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spojena_levice_001_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "cd63824edcc91c65434182d6f781cfd1102fe1e1",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spojena_levice_001_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d5928d61c21917e006c841e6361698be96105eee",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spojena_levice_003_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "4dd906c6c6b702dd33c0004895aa4aaad6439112",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spolu-portlik_001_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "39ec5f832a755611c0e8c7f577e934d8af03a3e2",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spolu-portlik_001_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "cf10f7359ffa9fdf302b37508d928e355f273971",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spolu-portlik_001_009",
+          "relevant": true,
+          "stance": 0.5,
+          "confidence": 0.75,
+          "quote": "Nedopustím, aby tendry na další úseky metra D měly skoro tříleté zpoždění",
+          "quote_ok": true
+        },
+        {
+          "key": "c10ef6b737d97e0a305908fbec8411065e444464",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spolu-portlik_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "84f139b0e3cbf46fc81d0c615b292d6846dbd6d9",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "spolu-portlik_001_015",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "76fe74f5c21df23bb928ee7df43ab05d8505b6fd",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "starostove_008_002",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 1.0,
+          "quote": "Dotáhneme výstavbu metra D",
+          "quote_ok": true
+        },
+        {
+          "key": "79f1ae49497bf93fb6f8cff065611731aa127512",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "starostove_008_003",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 0.75,
+          "quote": "Budeme pokračovat ve výstavbě metra D, udržíme ji v tempu a připravíme navazující úseky.",
+          "quote_ok": true
+        },
+        {
+          "key": "7a727067d8718c34d4d87e3a8d232635fb776a17",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "starostove_005_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "8e21c998d4cddcf41bdcdf28d3e8a3cf9716f155",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "starostove_005_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b78dee073719d4ceff4795160e73473f23ed1797",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "starostove_007_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "c9b5cb284f197edf4dd6344514cf8db4d0e3f0b7",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "voluntia_001_029",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d0bb42ee0410dd6470065ea0cab9cb4868659dfe",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "voluntia_001_026",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "6e35e3adff9320040203562b5e44a033927dfedc",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "voluntia_001_028",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "c127f994a337022ca20ee3e687b754f6c0b054a4",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "voluntia_001_037",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "522b7f188d53309945299376b77618a4c2eb8131",
+          "claim": "Praha by měla dostavět metro D.",
+          "passage_id": "voluntia_001_036",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        }
+      ],
+      "expected_rows": [
+        {
+          "party": "pirati",
+          "quote": "Pokračování výstavby metra D v úseku Pankrác – Písnice.",
+          "page": 1,
+          "score": 1.0,
+          "confidence": 1.0
+        },
+        {
+          "party": "prahasobe",
+          "quote": "ZAČALI JSME STAVĚT METRO D – A STAVBU DOTÁHNEME!",
+          "page": null,
+          "score": 1.0,
+          "confidence": 1.0
+        },
+        {
+          "party": "spojena_levice",
+          "quote": "Metro D – Dokončení trasy Jih – Pankrác – Nusle – nám. Míru – hl. nádraží – Žižkov – Vysočany.",
+          "page": 2,
+          "score": 1.0,
+          "confidence": 1.0
+        },
+        {
+          "party": "spolu-portlik",
+          "quote": "Nedopustím, aby tendry na další úseky metra D měly skoro tříleté zpoždění",
+          "page": 1,
+          "score": 0.375,
+          "confidence": 0.75
+        },
+        {
+          "party": "starostove",
+          "quote": "Dotáhneme výstavbu metra D",
+          "page": 8,
+          "score": 1.0,
+          "confidence": 1.0
+        },
+        {
+          "party": "starostove",
+          "quote": "Budeme pokračovat ve výstavbě metra D, udržíme ji v tempu a připravíme navazující úseky.",
+          "page": 8,
+          "score": 0.75,
+          "confidence": 0.75
+        }
+      ]
+    },
+    {
+      "claim": "Chci méně turistů",
+      "query_cache_key": "f9dc04a25d82155b3ffe819cec84ec892491c34e",
+      "judge_answers": [
+        {
+          "key": "41b148d8c32359a72e3d8264bb20197d0308c1bb",
+          "claim": "Chci méně turistů",
+          "passage_id": "ano_002_006",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "1b524083c2ac8cef5cced73f4fbde43a14d6e49f",
+          "claim": "Chci méně turistů",
+          "passage_id": "ano_005_008",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "6b1ba4d5eef1ccbbbbb9bd8ce8062e96e0d394d1",
+          "claim": "Chci méně turistů",
+          "passage_id": "ano_011_008",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "437b3f19660b88fb10fda6a43c59d183e9387b55",
+          "claim": "Chci méně turistů",
+          "passage_id": "ano_011_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "f7e4a1ce09312b0ab7246e525aab6bf91e3f828f",
+          "claim": "Chci méně turistů",
+          "passage_id": "ano_003_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "54bff1e00599c63a21f61b4316045a568f05482a",
+          "claim": "Chci méně turistů",
+          "passage_id": "jsme_praha_005_006",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "0a0c1392b2d171c2a67b359026e7e0857d7fa71f",
+          "claim": "Chci méně turistů",
+          "passage_id": "jsme_praha_001_010",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "668c9112a178a73b8058adf1922e3d59c87d534c",
+          "claim": "Chci méně turistů",
+          "passage_id": "jsme_praha_004_007",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "78c3ffa0f6fb3e065d1c9e575d9f4b13e33694c8",
+          "claim": "Chci méně turistů",
+          "passage_id": "jsme_praha_005_009",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d02a5922966f5f550463c23cacb99b2cb5f2c8c7",
+          "claim": "Chci méně turistů",
+          "passage_id": "jsme_praha_002_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "98fdd45b64b6b04a8f92e2342db85b21e2ed920a",
+          "claim": "Chci méně turistů",
+          "passage_id": "levice_009_001",
+          "relevant": true,
+          "stance": 0.5,
+          "confidence": 0.75,
+          "quote": "Prosadíme rovněž vymáhání stavební legislativy, aby se krátkodobé ubytování neprovozovalo v bytech",
+          "quote_ok": true
+        },
+        {
+          "key": "c5536ac37602e154d9071ea662b0acc824ea9973",
+          "claim": "Chci méně turistů",
+          "passage_id": "levice_009_002",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "33e30b5d6cbf98e604b4fde3ed8e80c9bf633d9a",
+          "claim": "Chci méně turistů",
+          "passage_id": "levice_002_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "f3c63e28d57452498879b233154a1c9542813e5b",
+          "claim": "Chci méně turistů",
+          "passage_id": "levice_008_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "fdd1c3ae300aa714185fda6788eb48e262d42c32",
+          "claim": "Chci méně turistů",
+          "passage_id": "levice_004_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0dace6d0c95acb2756b5438974b469c956cc58e2",
+          "claim": "Chci méně turistů",
+          "passage_id": "pirati_001_217",
+          "relevant": true,
+          "stance": 0.5,
+          "confidence": 0.5,
+          "quote": "dlouhodobě udržitelnou alternativu k masovému turismu",
+          "quote_ok": true
+        },
+        {
+          "key": "ec0fba30c7adb7b68cddfb62d0c5d20a82823e6e",
+          "claim": "Chci méně turistů",
+          "passage_id": "pirati_001_216",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0e5b66a72f6b6274e7fba24713fcf984de02e331",
+          "claim": "Chci méně turistů",
+          "passage_id": "pirati_001_218",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "98b77de69a5c5112597cd4fa0d6caa32ebe3e4d1",
+          "claim": "Chci méně turistů",
+          "passage_id": "pirati_001_214",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "9a26b418a1e36feff9925403339f10daf82bac34",
+          "claim": "Chci méně turistů",
+          "passage_id": "pirati_001_096",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "9cb283825733a92882f6798b2b9f18b90516a237",
+          "claim": "Chci méně turistů",
+          "passage_id": "prahasobe_roadmap_017",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "88115ba8a5ec2bfab73089a7cc74d1ce9ea99ba1",
+          "claim": "Chci méně turistů",
+          "passage_id": "prahasobe_detail_027",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "393d0071a41d20b5d8121bef1e0f032cc734a431",
+          "claim": "Chci méně turistů",
+          "passage_id": "prahasobe_roadmap_006",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "5097bb1d2a61b6644db0dd5c43c4aab84de372f2",
+          "claim": "Chci méně turistů",
+          "passage_id": "prahasobe_detail_042",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "cb6b93ac799234b255a574e9086514efa1ebb5a6",
+          "claim": "Chci méně turistů",
+          "passage_id": "prahasobe_detail_023",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e249ec478413d5c3ae3f83ec72a3cc0f526f819b",
+          "claim": "Chci méně turistů",
+          "passage_id": "spd_001_010",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "bbba9e5913b26a6c99ea2382c7ebc87dcd9af69d",
+          "claim": "Chci méně turistů",
+          "passage_id": "spd_001_015",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "de907d602a1710226734fdc9a91950485caa5022",
+          "claim": "Chci méně turistů",
+          "passage_id": "spd_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "72bb45914d7642002a9d3444d053aa277f80dca9",
+          "claim": "Chci méně turistů",
+          "passage_id": "spd_001_012",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "17c905d80ef44016fe5ec5429de60db1eb29e061",
+          "claim": "Chci méně turistů",
+          "passage_id": "spd_001_009",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b3b4ee5ef57adb9e26516f3a6ca0b2eef4321a00",
+          "claim": "Chci méně turistů",
+          "passage_id": "spojena_levice_004_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "135c6440de369f60beaa336efc4e8d5c9fdad92e",
+          "claim": "Chci méně turistů",
+          "passage_id": "spojena_levice_001_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "ab05411475020d29d58e999d67c1ede78c89e6a4",
+          "claim": "Chci méně turistů",
+          "passage_id": "spojena_levice_004_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "5d111148c8f1e61a85b0962275f90031d64b9a84",
+          "claim": "Chci méně turistů",
+          "passage_id": "spojena_levice_001_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "43ffb4ad1776c6338960fbbb818c92451ccfe558",
+          "claim": "Chci méně turistů",
+          "passage_id": "spojena_levice_004_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0dcf68f6cc70e100bf3ca2c16b7b6ab9ff0ba029",
+          "claim": "Chci méně turistů",
+          "passage_id": "spolu-portlik_001_015",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "794f2e06578d1642ea95606b733fcbc638afe7b4",
+          "claim": "Chci méně turistů",
+          "passage_id": "spolu-portlik_001_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0f9d441109b4f4fe9639a394241e2506143c161a",
+          "claim": "Chci méně turistů",
+          "passage_id": "spolu-portlik_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "6b19491fc60b56533f4c81d5a19b2ceb8eee2b79",
+          "claim": "Chci méně turistů",
+          "passage_id": "spolu-portlik_001_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "7a9b2185203c63562fbd54c515c01c7bdcac9903",
+          "claim": "Chci méně turistů",
+          "passage_id": "spolu-portlik_001_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "70607c32846cb3b64adcab502e4bc93e1845fae1",
+          "claim": "Chci méně turistů",
+          "passage_id": "starostove_027_002",
+          "relevant": true,
+          "stance": 0.5,
+          "confidence": 0.5,
+          "quote": "ochráníme bydlení před nadměrným turismem",
+          "quote_ok": true
+        },
+        {
+          "key": "de20463d71dcbc86a3c640776fae75592d23d922",
+          "claim": "Chci méně turistů",
+          "passage_id": "starostove_005_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e8f36caf62be2f86bb0b99bcee1613cfa11e8ea0",
+          "claim": "Chci méně turistů",
+          "passage_id": "starostove_027_004",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "6b83a1ce32d6e1ef7676710ebb7ec3025a84a016",
+          "claim": "Chci méně turistů",
+          "passage_id": "starostove_028_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "a4d3b07657060b6dacdc8572551895642af55dfc",
+          "claim": "Chci méně turistů",
+          "passage_id": "starostove_023_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "04647d2c61d633b87fbd3a4d065e160313140273",
+          "claim": "Chci méně turistů",
+          "passage_id": "voluntia_001_011",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "f94a32eec7561941a3a320da11b3ed07c82d2c1d",
+          "claim": "Chci méně turistů",
+          "passage_id": "voluntia_001_022",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "50a3a3b273c6c5ad87f22c918150ff35e8f04f54",
+          "claim": "Chci méně turistů",
+          "passage_id": "voluntia_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "30873220b6b4091df6165179fbd39123357a3edb",
+          "claim": "Chci méně turistů",
+          "passage_id": "voluntia_001_031",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "48bccf510bcb3f685e11c6c7eba9bfe3f266f8fc",
+          "claim": "Chci méně turistů",
+          "passage_id": "voluntia_001_055",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        }
+      ],
+      "expected_rows": [
+        {
+          "party": "levice",
+          "quote": "Prosadíme rovněž vymáhání stavební legislativy, aby se krátkodobé ubytování neprovozovalo v bytech",
+          "page": 9,
+          "score": 0.375,
+          "confidence": 0.75
+        },
+        {
+          "party": "pirati",
+          "quote": "dlouhodobě udržitelnou alternativu k masovému turismu",
+          "page": 1,
+          "score": 0.25,
+          "confidence": 0.5
+        },
+        {
+          "party": "starostove",
+          "quote": "ochráníme bydlení před nadměrným turismem",
+          "page": 27,
+          "score": 0.25,
+          "confidence": 0.5
+        }
+      ]
+    },
+    {
+      "claim": "Chci otevřít školní hřiště veřejnosti",
+      "query_cache_key": "f912ad928db8222f8853dbec56d42003278d27af",
+      "judge_answers": [
+        {
+          "key": "c521cfe3854716feffc0da13b04f8d6aeee1a7f0",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "ano_009_001",
+          "relevant": true,
+          "stance": 0.5,
+          "confidence": 1.0,
+          "quote": "Otevřeme školní hřiště a tělocvičny veřejnosti odpoledne a o víkendech, ale podle jasných pravidel.",
+          "quote_ok": true
+        },
+        {
+          "key": "0c71b411134b386c84a06dc6bb829c396468d8b1",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "ano_009_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "aac9061811b8ea9e1eef3f4cc7c9e88fe5cd6e04",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "ano_009_002",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "e1c1c0c2f26b88bc45a5b87b30beb019af628667",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "ano_008_006",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "3bd0d1e9b265f8fec6b6bd65880dd645000b3fa4",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "ano_008_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "af1b9062ab40ebf3996cb92dd117ae64279b3a65",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "jsme_praha_006_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "570ba5757d2a5c084503518b203903fb803a33c5",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "jsme_praha_005_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "4afcb5b4626f70d166102388063b17c79178a5c2",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "jsme_praha_007_009",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "22ff189dd03c0546e4b2400ac1f0490fb2279630",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "jsme_praha_005_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0feecf80504d72833aaaccfea0e982aa9ccb73eb",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "jsme_praha_005_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d483b4d62109b45c44cfe15e05c0dca80bd76680",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "levice_008_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "ca1f0fceefad4cf17f8b890bd94d5dbaf4936bfe",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "levice_003_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "7250cbbe2dcc6b01ff7f1b6118d47ecffe844321",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "levice_004_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "6d65b2ed5adb4efc5873a50cd9281a818e37ded8",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "levice_005_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0f861be86b73dce3729ee8bdaabf77794ce154ae",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "levice_005_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "fbe4f215011b28d7f4e94e2beac3bb0b2ee62055",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "pirati_001_194",
+          "relevant": null,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": false
+        },
+        {
+          "key": "2dd3c5a44ce5ee9ca9306775d8e1b4ef6e424832",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "pirati_001_196",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "19d553428ca3a5ab28b0759163ece5f0036acbdc",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "pirati_001_215",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "075b05c57b7b54ba47767e9c0f75760fff0981c7",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "pirati_001_152",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "52b83acaf09dff0badb64e76aaaa825492c651c9",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "pirati_001_116",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "9398ab2ad75c6bb551bfff6cbdad21f9db39bc29",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "prahasobe_detail_053",
+          "relevant": true,
+          "stance": 1.0,
+          "confidence": 1.0,
+          "quote": "Hřiště u škol otevřeme lidem a nastavíme jasná pravidla využití.",
+          "quote_ok": true
+        },
+        {
+          "key": "3dae0ab35e2a47571bcba63b95770792eace30a7",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "prahasobe_detail_033",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "750cf00752b9985f5a3840bad4926b8bd651d4a5",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "prahasobe_detail_043",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "c787ee8ea331e287428127ae19bf22f92d778d7b",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "prahasobe_roadmap_018",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "828f1786af554376bf63af5e538dde9ef1e2946a",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "prahasobe_detail_050",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "a687f4635a3872b9ff929423599c39f8bc9344b5",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spd_001_013",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d331cd774283bc482f6858be3768d077af8793f0",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spd_001_006",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b37572072406ef98dfb6095c3ee111acac41c414",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spd_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "5fa2ec6d7fc95104479ab7289a5942ce6b2ad71f",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spd_001_007",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "14316e1ca61f475bc721a0c00f0e2a9861c48285",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spd_001_009",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "05663c871ad4d57a723b23b3a52e688384e9556f",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spojena_levice_002_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "c633d31b21821e9f1274f686317bc93764343616",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spojena_levice_003_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "c964886a9f9c52860d0e2cc41341bbdc2bd5637e",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spojena_levice_001_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b28a1e0dd50f0fe98bf71266dc56d13551acde5f",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spojena_levice_004_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "f550738cb8a3f361c1c5d4364e766c67547649ab",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spojena_levice_001_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "193e751619c933b4c1d77ea9f430428dd4f6e925",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spolu-portlik_001_010",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "1de14f51d014691562c7901790a37654a3814c16",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spolu-portlik_001_015",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "d9663cfbb4085e467e3bf28adc9d762a00669b01",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spolu-portlik_001_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e4544c8ef1559d038c9b9dc477ba2f7cd792fad0",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spolu-portlik_001_011",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "887649bee75cd7a5a4c4be1730d135ee204d5b49",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "spolu-portlik_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "725d72097adcb53d60608d8fa505274e58cdf31b",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "starostove_006_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "e7d292cd972c81d401fc7c8fd7b3528a4e5e86d3",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "starostove_012_004",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "4c380fcb75460b37ff56aab9478d7e332814551d",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "starostove_012_002",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "cfde2746da4b220e2b41d0e571997d63deba8070",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "starostove_016_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "aca8355a183ba8a5a2ddf195a8717bc67bee61c3",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "starostove_006_001",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "b7cfab9b72cb46f22b25c88467a4b1f41e853946",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "voluntia_001_031",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "a0a40e10edd33fa677990a87e96ae6cae118930d",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "voluntia_001_005",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "0f954c5c41db5db0f865aec8d2bf03d76d09cb55",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "voluntia_001_003",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "1786af7b82d04c25bbb49a313b517e2eeb628d2c",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "voluntia_001_032",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        },
+        {
+          "key": "43138e44f0161b1a81d3dd76045be6be455fe42c",
+          "claim": "Chci otevřít školní hřiště veřejnosti",
+          "passage_id": "voluntia_001_029",
+          "relevant": false,
+          "stance": null,
+          "confidence": null,
+          "quote": "",
+          "quote_ok": true
+        }
+      ],
+      "expected_rows": [
+        {
+          "party": "ano",
+          "quote": "Otevřeme školní hřiště a tělocvičny veřejnosti odpoledne a o víkendech, ale podle jasných pravidel.",
+          "page": 9,
+          "score": 0.5,
+          "confidence": 1.0
+        },
+        {
+          "party": "prahasobe",
+          "quote": "Hřiště u škol otevřeme lidem a nastavíme jasná pravidla využití.",
+          "page": null,
+          "score": 1.0,
+          "confidence": 1.0
+        }
+      ]
+    }
+  ]
+}
