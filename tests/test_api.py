@@ -210,7 +210,19 @@ def test_the_rate_limit_answers_429_after_the_allowance(client, with_data):
     for n in range(server.RATE_LIMIT):
         assert client.post("/api/analyze", json={"claims": ["x"]}).status_code == 200, n
     r = client.post("/api/analyze", json={"claims": ["x"]})
-    assert r.status_code == 429 and "Příliš mnoho" in r.get_json()["error"]
+    assert r.status_code == 429
+    error = r.get_json()["error"]
+    assert "limit rychlosti" in error, "must say WHICH limit was hit"
+    assert "Zkuste to znovu za" in error, "must say how long to wait"
+
+
+def test_the_rate_limit_tells_the_user_how_long_to_wait(client, with_data):
+    for _ in range(server.RATE_LIMIT):
+        client.post("/api/analyze", json={"claims": ["x"]})
+    r = client.post("/api/analyze", json={"claims": ["x"]})
+    wait = int(r.headers["Retry-After"])
+    assert 1 <= wait <= server.RATE_WINDOW + 1
+    assert f"za {wait} s" in r.get_json()["error"], "header and message must agree"
 
 
 def test_the_rate_limit_is_per_ip(client, with_data):
@@ -226,9 +238,38 @@ def test_the_rate_limit_is_per_ip(client, with_data):
 
 
 def test_the_daily_cap_blocks_when_too_few_calls_remain(client, with_data, monkeypatch):
-    monkeypatch.setattr(server, "DAILY_JUDGE_CAP", 10)   # a claim needs 5 x 3 = 15
+    # CONFIG has k_stance 5 and 3 parties, so a claim costs 15 prompts
+    monkeypatch.setattr(server, "DAILY_JUDGE_CAP", 150)          # = 10 claims
+    assert client.post("/api/analyze", json={"claims": ["x"]}).status_code == 200
+    pipeline.STATS["judge_calls"] = 140                          # only 10 prompts left
     r = client.post("/api/analyze", json={"claims": ["x"]})
-    assert r.status_code == 429 and "Denní limit" in r.get_json()["error"]
+    assert r.status_code == 429
+    error = r.get_json()["error"]
+    assert "denní limit" in error, "must say WHICH limit was hit"
+    assert "Zbývá 0 z 10 tvrzení" in error, "must say how much budget is left"
+    assert "půlnoci UTC" in error, "must say when it resets"
+
+
+def test_the_daily_cap_sets_retry_after_to_the_reset(client, with_data, monkeypatch):
+    monkeypatch.setattr(server, "DAILY_JUDGE_CAP", 1)
+    r = client.post("/api/analyze", json={"claims": ["x"]})
+    assert r.status_code == 429
+    assert 1 <= int(r.headers["Retry-After"]) <= 86400
+
+
+def test_the_two_limits_are_told_apart(client, with_data, monkeypatch):
+    """Both are 429, so the message is the only thing distinguishing them for the user."""
+    for _ in range(server.RATE_LIMIT):
+        client.post("/api/analyze", json={"claims": ["x"]})
+    rate = client.post("/api/analyze", json={"claims": ["x"]}).get_json()["error"]
+
+    monkeypatch.setattr(server, "_hits", {})                     # clear the rate limiter
+    monkeypatch.setattr(server, "DAILY_JUDGE_CAP", 1)
+    daily = client.post("/api/analyze", json={"claims": ["x"]}).get_json()["error"]
+
+    assert rate != daily
+    assert "rychlosti" in rate and "rychlosti" not in daily
+    assert "denní" in daily and "denní" not in rate
 
 
 def test_the_daily_cap_counts_real_calls_to_the_proxy(client, with_data, monkeypatch):

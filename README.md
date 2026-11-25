@@ -88,10 +88,42 @@ Render for the gunicorn path.
 | `POST /api/analyze` | yes | 1–5 claims, ≤ 500 characters joined; 400 / 429 / 500 with `{"error": "<Czech>"}` |
 
 ### Abuse limits
-- 3 analyses per IP per minute, and a cap of 2000 judge prompts per UTC day.
+Two limits, each of which tells the user **which** one they hit and when to come back. Both
+answer `429` with a Czech `error` the page renders verbatim, plus a `Retry-After` header.
+
+| Limit | Scope | Value | What the user sees |
+|---|---|---|---|
+| Rate | **per user** (per IP) | `RATE_LIMIT` = 3 analyses per 60 s | `Dosažen limit rychlosti: 3 analýzy za 60 sekund. Zkuste to znovu za 47 s.` |
+| Daily | **shared by everyone** | `DAILY_JUDGE_CAP` = 10000 prompts per UTC day | `Dosažen denní limit dotazů na model. Zbývá 12 z 200 tvrzení na dnešek, požadováno 3. Limit se obnoví po půlnoci UTC.` |
+
+The scopes differ on purpose. The rate limit is a dict keyed by client address, so each user
+gets their own window. The daily cap reads one process-wide counter with no per-user
+breakdown, so it is **one shared pot**.
+
+**What 10000 buys.** One claim costs `k_stance × parties` = 5 × 10 = 50 prompts, and a passage
+may need one re-ask, so a claim costs at most 100. That gives **100 uncached claims a day in
+the worst case** and 200 if nothing is re-asked — the 200 being the figure the message quotes,
+since it divides the remaining budget by 50. Sized for a live audience trying the tool, not
+just the team testing it. Recompute it if `k_stance` or the number of parties changes.
+
+Cached claims cost nothing, because the counter only increments on a prompt actually sent. The
+18 claims in the committed cache are therefore effectively unlimited, which is what makes a
+demo safe.
+
+- **One user can empty the shared pot.** At 3 analyses a minute, 5 claims each, 50 prompts a
+  claim, that is 750 prompts a minute — the whole 10000 in about 13 minutes, all within the
+  rate limit. Everyone else is then refused until midnight UTC. The rate limit paces how fast
+  somebody works; it does not bound how much of the pot they take. Accepted deliberately: a
+  per-user daily allowance was considered and rejected as not worth the complexity for a
+  service behind a shared password. Revisit it if the URL is ever given to a class.
 - Both counters live in this process's memory, so a restart resets them. Render restarts a
   free service whenever it likes, so treat the daily cap as a brake on accidents, not a
   guarantee against a determined abuser.
+- The daily check reserves the full cost up front and ignores the cache, so near exhaustion a
+  request that would be served entirely from cache is still refused. Deliberate: the
+  alternative is admitting a request and running out of budget halfway through it.
+- Retries count. A failed prompt is retried three times, so a flaky proxy burns the budget
+  faster than the arithmetic above suggests.
 - The client address comes from `X-Forwarded-For`, which is only trustworthy because Render's
   proxy overwrites it. Do not run this open to the internet without such a proxy.
 
@@ -259,8 +291,14 @@ Checked against `render.com/docs/free` and `render.com/docs/python-version` on
 Every analysed claim makes one embedding call plus `k_stance × parties` judge calls — up to
 51 outbound requests per claim, so ~255 for five claims. No numeric threshold is published.
 This is the main reason the daily judge cap in `server.py` exists: it is not only about the
-university's key, it is about not getting the service suspended. Keep the cap, and if you
-raise it, raise it knowingly.
+university's key, it is about not getting the service suspended.
+
+So the cap is a ceiling on **outbound traffic**, not a billing figure, and 10000 prompts a day
+is a deliberate choice rather than a derived one — there is nothing published to derive it
+from. It accepts more of that risk than a smaller cap would, in exchange for not cutting users
+off mid-demo. The thing it moves closer to is an unpublished suspension threshold, and a
+suspended free service is only restored by moving to a paid plan. If the service is ever
+suspended for outbound traffic, lowering this is the first thing to try.
 
 ### Bandwidth and build minutes
 The docs give **no numbers** for either on free — see the dashboard's *Included Usage* page

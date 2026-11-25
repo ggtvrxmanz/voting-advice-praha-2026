@@ -30,7 +30,7 @@ import os
 import threading
 import time
 from collections import deque
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from flask import Flask, Response, jsonify, request, send_from_directory
@@ -41,7 +41,19 @@ HERE = Path(__file__).resolve().parent
 
 MAX_CHARS, MAX_CLAIMS = 500, 5          # same limits the page enforces in the browser
 RATE_LIMIT, RATE_WINDOW = 3, 60         # analyses per IP per minute
-DAILY_JUDGE_CAP = 2000                  # prompts sent to the proxy per UTC day
+
+# Prompts sent to the proxy per UTC day. One claim costs k_stance x parties = 5 x 10 = 50
+# prompts, and a passage may need one re-ask, so a claim costs at most 100. So this allows
+# 100 uncached claims a day in the worst case and 200 if nothing is re-asked -- enough for a
+# live audience to try the tool rather than only for the team to test it.
+# Cached claims cost nothing, so the committed warm cache does not eat into this.
+# Recompute if k_stance or the number of parties changes.
+#
+# This is a ceiling on OUTBOUND traffic, not a budget: Render may suspend a free service that
+# initiates an uncommonly high volume of public internet traffic and publishes no threshold,
+# and a suspended free service is only restored by moving to a paid plan. 10000 is a
+# deliberate choice to accept more of that risk in exchange for not cutting users off.
+DAILY_JUDGE_CAP = 10000
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "")   # empty = no password (local dev)
 REALM = 'Basic realm="Volebni kalkulacka Praha 2026", charset="UTF-8"'
 
@@ -90,16 +102,30 @@ def client_ip() -> str:
     return fwd.split(",")[0].strip() or (request.remote_addr or "unknown")
 
 
-def too_many_requests(ip: str) -> bool:
+def rate_limit_wait(ip: str) -> int:
+    """0 when the request is allowed (and recorded), else seconds until it would be.
+
+    Returning the wait rather than a bool is what lets the page tell the user how long to
+    wait instead of just that they were refused.
+    """
     now = time.time()
     with _lock:
         dq = _hits.setdefault(ip, deque())
         while dq and now - dq[0] > RATE_WINDOW:
             dq.popleft()
         if len(dq) >= RATE_LIMIT:
-            return True
+            # the oldest request leaves the window first, so that is when a slot frees up
+            return max(1, int(RATE_WINDOW - (now - dq[0])) + 1)
         dq.append(now)
-        return False
+        return 0
+
+
+def seconds_to_utc_midnight() -> int:
+    """When the daily cap resets, so the message can say when to come back."""
+    now = datetime.now(timezone.utc)
+    tomorrow = (now + timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    return max(1, int((tomorrow - now).total_seconds()))
 
 
 def judge_calls_left() -> int:
@@ -113,9 +139,16 @@ def judge_calls_left() -> int:
         return max(0, DAILY_JUDGE_CAP - used)
 
 
-def bad_request(message: str, status: int = 400):
-    """The page shows `error` verbatim, so every message here is Czech."""
-    return jsonify(error=message), status
+def bad_request(message: str, status: int = 400, retry_after: int | None = None):
+    """The page shows `error` verbatim, so every message here is Czech.
+
+    `retry_after` also goes out as the standard HTTP header, which is the correct thing for a
+    429 even though index.html reads the message rather than the header.
+    """
+    response = jsonify(error=message)
+    if retry_after is not None:
+        response.headers["Retry-After"] = str(retry_after)
+    return response, status
 
 
 # ------------------------------------------------------------------ routes
@@ -164,19 +197,35 @@ def analyze():
     if len(" / ".join(claims)) > MAX_CHARS:
         return bad_request(f"Tvrzení jsou dohromady delší než {MAX_CHARS} znaků.")
 
-    if too_many_requests(client_ip()):
+    # Each limit says which one it is and when to come back, so the user is never just
+    # refused. The page renders `error` verbatim, so the wording here is what they read.
+    wait = rate_limit_wait(client_ip())
+    if wait:
+        # "analýzy" is the Czech plural for 2-4. If RATE_LIMIT is ever set to 1 or to 5 or
+        # more, reword this: 1 takes "analýza" and 5+ takes "analýz".
         return bad_request(
-            f"Příliš mnoho dotazů. Zkuste to znovu za {RATE_WINDOW} sekund.", 429)
+            f"Dosažen limit rychlosti: {RATE_LIMIT} analýzy za {RATE_WINDOW} sekund. "
+            f"Zkuste to znovu za {wait} s.", 429, retry_after=wait)
 
     try:
         cfg = pipeline.config()
-        need = len(claims) * cfg["k_stance"] * len(cfg["parties"])
+        per_claim = cfg["k_stance"] * len(cfg["parties"])
+        need = len(claims) * per_claim
     except pipeline.DataMissing as e:
         app.logger.warning("analyze: data missing: %s", e)
         return bad_request("Data aplikace nejsou nahraná.", 500)
-    if judge_calls_left() < need:
+
+    left = judge_calls_left()
+    if left < need:
+        # `need` assumes nothing is cached, so near the limit a request that would in fact
+        # be served from cache is still refused. Conservative on purpose: the alternative is
+        # admitting a request and running out of budget halfway through it.
+        claims_left = left // per_claim
         return bad_request(
-            "Denní limit dotazů na model je vyčerpán. Zkuste to prosím zítra.", 429)
+            f"Dosažen denní limit dotazů na model. Zbývá {claims_left} "
+            f"z {DAILY_JUDGE_CAP // per_claim} tvrzení na dnešek, požadováno {len(claims)}. "
+            "Limit se obnoví po půlnoci UTC.", 429,
+            retry_after=seconds_to_utc_midnight())
 
     try:
         queries = []
