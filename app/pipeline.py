@@ -22,6 +22,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import logging
 import os
 import re
 import threading
@@ -32,6 +33,7 @@ from pathlib import Path
 import numpy as np
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
+log = logging.getLogger(__name__)
 
 # Anchored scales from C2. They belong to prompt v3 and must match the prompt text that
 # app_config.json carries; the parity test is what proves they still agree with it.
@@ -49,6 +51,7 @@ FIX_CS = (
 _config = None
 _corpus = None
 _client = None
+_warmed = False
 _lock = threading.Lock()
 
 QUERY_CACHE: dict[str, np.ndarray] = {}  # sha1 -> query vector
@@ -117,6 +120,70 @@ def client():
         base = os.environ.get("LITELLM_BASE_URL", "https://litellm.vse.cz/v1")
         _client = OpenAI(base_url=base, api_key=key, timeout=180)
     return _client
+
+
+def warm_start(force: bool = False) -> dict:
+    """Fill the caches from the files the notebook exported, if they are present.
+
+    Render's filesystem is ephemeral and a free service spins down after 15 idle minutes, so
+    both caches are empty again on every restart, redeploy and spin-down. Without this, the
+    first analysis of a session pays the spin-up *and* a full set of live judge calls — the
+    worst possible moment being a demo.
+
+    Two properties worth knowing:
+
+    * **A stale file cannot give a wrong answer.** Every key is a hash of the configuration,
+      so if the model, prompt version, parameters or instruction prefix have changed, the
+      keys simply will not match and the app calls the model as usual. The file becomes
+      useless, never misleading.
+    * **A corrupt file cannot take the app down.** The app is perfectly usable with cold
+      caches, so a damaged file is logged and skipped rather than raised.
+
+    Existing entries always win, so a test that has injected its own answers is never
+    overwritten. Returns what it loaded, for the caller to log.
+    """
+    global _warmed
+    with _lock:
+        if _warmed and not force:
+            return {"queries": 0, "judgements": 0, "skipped": "already warmed"}
+        _warmed = True
+
+    out = {"queries": 0, "judgements": 0}
+
+    qpath = DATA_DIR / "query_cache.json"
+    if qpath.exists():
+        try:
+            raw = json.loads(qpath.read_text(encoding="utf-8"))
+            for key, vec in raw.items():
+                # cast back to float32: the notebook's vectors are float32, and JSON wrote
+                # their exact value, so this round trip changes nothing
+                QUERY_CACHE.setdefault(key, np.asarray(vec, dtype=np.float32))
+            out["queries"] = len(raw)
+        except (OSError, ValueError, TypeError) as e:
+            log.warning("warm start: ignoring %s: %s", qpath.name, e)
+
+    jpath = DATA_DIR / "app_stance_cache.jsonl"
+    if jpath.exists():
+        try:
+            with open(jpath, encoding="utf-8") as fh:
+                for n, line in enumerate(fh, 1):
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except ValueError as e:
+                        log.warning("warm start: %s line %d: %s", jpath.name, n, e)
+                        continue
+                    if isinstance(rec, dict) and rec.get("key"):
+                        JUDGE_CACHE.setdefault(rec["key"], rec)
+                        out["judgements"] += 1
+        except OSError as e:
+            log.warning("warm start: ignoring %s: %s", jpath.name, e)
+
+    log.info("warm start: %d query vectors, %d judge answers",
+             out["queries"], out["judgements"])
+    return out
 
 
 # ---------------------------------------------------------------- B3: retrieval
