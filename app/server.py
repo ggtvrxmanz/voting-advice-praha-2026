@@ -42,12 +42,18 @@ HERE = Path(__file__).resolve().parent
 MAX_CHARS, MAX_CLAIMS = 500, 5          # same limits the page enforces in the browser
 RATE_LIMIT, RATE_WINDOW = 3, 60         # analyses per IP per minute
 
-# Prompts sent to the proxy per UTC day. Derived, not guessed: one claim costs
-# k_stance x parties = 5 x 10 = 50 prompts, and a passage may need one re-ask, so a claim
-# costs at most 100. 40 uncached claims x 100 = 4000 guarantees the 40 even in the worst
-# case. Cached claims cost nothing, so the committed warm cache does not eat into this.
+# Prompts sent to the proxy per UTC day. One claim costs k_stance x parties = 5 x 10 = 50
+# prompts, and a passage may need one re-ask, so a claim costs at most 100. So this allows
+# 100 uncached claims a day in the worst case and 200 if nothing is re-asked -- enough for a
+# live audience to try the tool rather than only for the team to test it.
+# Cached claims cost nothing, so the committed warm cache does not eat into this.
 # Recompute if k_stance or the number of parties changes.
-DAILY_JUDGE_CAP = 4000
+#
+# This is a ceiling on OUTBOUND traffic, not a budget: Render may suspend a free service that
+# initiates an uncommonly high volume of public internet traffic and publishes no threshold,
+# and a suspended free service is only restored by moving to a paid plan. 10000 is a
+# deliberate choice to accept more of that risk in exchange for not cutting users off.
+DAILY_JUDGE_CAP = 10000
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "")   # empty = no password (local dev)
 REALM = 'Basic realm="Volebni kalkulacka Praha 2026", charset="UTF-8"'
 

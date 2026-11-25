@@ -94,13 +94,13 @@ answer `429` with a Czech `error` the page renders verbatim, plus a `Retry-After
 | Limit | Value | What the user sees |
 |---|---|---|
 | Rate | `RATE_LIMIT` = 3 analyses per IP per 60 s | `Dosažen limit rychlosti: 3 analýzy za 60 sekund. Zkuste to znovu za 47 s.` |
-| Daily | `DAILY_JUDGE_CAP` = 4000 prompts per UTC day | `Dosažen denní limit dotazů na model. Zbývá 12 z 80 tvrzení na dnešek, požadováno 3. Limit se obnoví po půlnoci UTC.` |
+| Daily | `DAILY_JUDGE_CAP` = 10000 prompts per UTC day | `Dosažen denní limit dotazů na model. Zbývá 12 z 200 tvrzení na dnešek, požadováno 3. Limit se obnoví po půlnoci UTC.` |
 
-**Where 4000 comes from.** One claim costs `k_stance × parties` = 5 × 10 = 50 prompts, and a
-passage may need one re-ask, so a claim costs at most 100. `40 × 100 = 4000` guarantees 40
-uncached claims a day even if every passage needs a re-ask. If none do, it stretches to 80 —
-which is the figure the message quotes, since it divides the remaining budget by 50.
-Recompute it if `k_stance` or the number of parties changes.
+**What 10000 buys.** One claim costs `k_stance × parties` = 5 × 10 = 50 prompts, and a passage
+may need one re-ask, so a claim costs at most 100. That gives **100 uncached claims a day in
+the worst case** and 200 if nothing is re-asked — the 200 being the figure the message quotes,
+since it divides the remaining budget by 50. Sized for a live audience trying the tool, not
+just the team testing it. Recompute it if `k_stance` or the number of parties changes.
 
 Cached claims cost nothing, because the counter only increments on a prompt actually sent. The
 18 claims in the committed cache are therefore effectively unlimited, which is what makes a
@@ -288,11 +288,12 @@ Every analysed claim makes one embedding call plus `k_stance × parties` judge c
 This is the main reason the daily judge cap in `server.py` exists: it is not only about the
 university's key, it is about not getting the service suspended.
 
-So the cap is a ceiling on **outbound traffic**, not a billing figure, and 4000 prompts a day
+So the cap is a ceiling on **outbound traffic**, not a billing figure, and 10000 prompts a day
 is a deliberate choice rather than a derived one — there is nothing published to derive it
-from. If you raise it, raise it knowing that the thing you are moving closer to is an
-unpublished suspension threshold, and that a suspended free service is only restored by
-moving to a paid plan.
+from. It accepts more of that risk than a smaller cap would, in exchange for not cutting users
+off mid-demo. The thing it moves closer to is an unpublished suspension threshold, and a
+suspended free service is only restored by moving to a paid plan. If the service is ever
+suspended for outbound traffic, lowering this is the first thing to try.
 
 ### Bandwidth and build minutes
 The docs give **no numbers** for either on free — see the dashboard's *Included Usage* page
