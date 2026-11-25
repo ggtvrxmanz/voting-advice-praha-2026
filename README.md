@@ -5,8 +5,12 @@ Czech voting advice tool: compares free-text claims with the programmes of 10 pa
 Research notebook: `notebooks/`. Web app: `app/`. Hosting: Render (free web service).
 
 > **Status: live.** <https://voting-advice-praha-2026.onrender.com> — behind a shared
-> password until the teacher or VŠE IT agrees to public use. The data is exported from the
-> notebook, the parity test passes, and the app answers from the real model.
+> password. The data is exported from the notebook, the parity test passes,
+> and the app answers from the real model.
+
+How to connect:
+username:
+password: Praha
 
 Verified on the deployed service:
 
