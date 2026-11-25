@@ -91,10 +91,14 @@ Render for the gunicorn path.
 Two limits, each of which tells the user **which** one they hit and when to come back. Both
 answer `429` with a Czech `error` the page renders verbatim, plus a `Retry-After` header.
 
-| Limit | Value | What the user sees |
-|---|---|---|
-| Rate | `RATE_LIMIT` = 3 analyses per IP per 60 s | `Dosažen limit rychlosti: 3 analýzy za 60 sekund. Zkuste to znovu za 47 s.` |
-| Daily | `DAILY_JUDGE_CAP` = 10000 prompts per UTC day | `Dosažen denní limit dotazů na model. Zbývá 12 z 200 tvrzení na dnešek, požadováno 3. Limit se obnoví po půlnoci UTC.` |
+| Limit | Scope | Value | What the user sees |
+|---|---|---|---|
+| Rate | **per user** (per IP) | `RATE_LIMIT` = 3 analyses per 60 s | `Dosažen limit rychlosti: 3 analýzy za 60 sekund. Zkuste to znovu za 47 s.` |
+| Daily | **shared by everyone** | `DAILY_JUDGE_CAP` = 10000 prompts per UTC day | `Dosažen denní limit dotazů na model. Zbývá 12 z 200 tvrzení na dnešek, požadováno 3. Limit se obnoví po půlnoci UTC.` |
+
+The scopes differ on purpose. The rate limit is a dict keyed by client address, so each user
+gets their own window. The daily cap reads one process-wide counter with no per-user
+breakdown, so it is **one shared pot**.
 
 **What 10000 buys.** One claim costs `k_stance × parties` = 5 × 10 = 50 prompts, and a passage
 may need one re-ask, so a claim costs at most 100. That gives **100 uncached claims a day in
@@ -106,6 +110,12 @@ Cached claims cost nothing, because the counter only increments on a prompt actu
 18 claims in the committed cache are therefore effectively unlimited, which is what makes a
 demo safe.
 
+- **One user can empty the shared pot.** At 3 analyses a minute, 5 claims each, 50 prompts a
+  claim, that is 750 prompts a minute — the whole 10000 in about 13 minutes, all within the
+  rate limit. Everyone else is then refused until midnight UTC. The rate limit paces how fast
+  somebody works; it does not bound how much of the pot they take. Accepted deliberately: a
+  per-user daily allowance was considered and rejected as not worth the complexity for a
+  service behind a shared password. Revisit it if the URL is ever given to a class.
 - Both counters live in this process's memory, so a restart resets them. Render restarts a
   free service whenever it likes, so treat the daily cap as a brake on accidents, not a
   guarantee against a determined abuser.
