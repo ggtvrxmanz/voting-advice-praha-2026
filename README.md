@@ -4,9 +4,21 @@ Czech voting advice tool: compares free-text claims with the programmes of 10 pa
 (dense retrieval + LLM judge) and ranks the parties, with verbatim quotes.
 Research notebook: `notebooks/`. Web app: `app/`. Hosting: Render (free web service).
 
-> **Status.** The app is deployed and the method is extracted and tested, but `app/data` has
-> not been exported from the notebook yet, so the live service runs in demo mode and the
-> parity test still skips. See *Refresh data from the notebook*.
+> **Status: live.** <https://voting-advice-praha-2026.onrender.com> — behind a shared
+> password until the teacher or VŠE IT agrees to public use. The data is exported from the
+> notebook, the parity test passes, and the app answers from the real model.
+
+Verified on the deployed service:
+
+```
+GET /api/health
+{"ok": true, "model": "Qwen3.8-27B", "parties": [... 10 ...],
+ "prompt_version": "v3", "tau": 0}
+
+GET /
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Basic realm="Volebni kalkulacka Praha 2026"
+```
 
 ## Local setup
 Python **3.13** — the same minor version as Colab and Render. Not 3.12 or 3.14: the point of
@@ -40,7 +52,11 @@ python scripts/probe.py
 ```
 One embedding call and one chat call, printing `OK` or `FAIL` for each, with timings and
 never the key. Useful when something stops working and you need to know whether the problem
-is the proxy, the key or the app. Last run from Render's Frankfurt instance:
+is the proxy, the key or the app.
+
+It is **not** part of the build any more — the build command is just `pip install`. Run it by
+hand when diagnosing. Its last run on Render, during Phase 1 when it was still in the build
+command, from the Frankfurt instance:
 
 ```
 python 3.13.18 | base_url https://litellm.vse.cz/v1 | key set: True
@@ -55,9 +71,10 @@ python app/server.py        # http://127.0.0.1:5000
 Flask's own server, for development only. With `APP_PASSWORD` empty in `.env` there is no
 password; set it and the browser asks for one (any user name, that password).
 
-Until the notebook's `E0` cell has been run and `app/data` filled in, `/api/health` answers
-`{"ok": false}` and the page runs in **demo mode** with fictional parties. That is deliberate:
-a missing export should not produce a broken page, and Render's health check must stay green.
+`app/data` is committed, so a fresh clone runs in live mode straight away — `/api/health`
+answers `ok: true` and analysing a claim calls the real model. The 1100 committed judge
+answers mean the 18 claims already run in the notebook come back from cache without a single
+API call; anything else costs ~51 calls, so you need your key in `.env`.
 
 On Windows you cannot run the production command locally — `gunicorn` needs `fcntl` and is
 POSIX-only, even though it installs. Test with `python app/server.py` here and rely on
@@ -106,7 +123,14 @@ production uses.
 | `tests/test_warm_start.py` | loading the committed caches, and failing safe | no |
 | `tests/test_parity.py` | `score_claim` against the notebook's own answers | **yes** |
 
-Current state: **70 passed, 9 skipped** — the 9 are `test_parity.py`, waiting on the export.
+Current state: **79 passed, 0 skipped.** The parity test runs, which is what makes the claim
+"this code is the evaluated method" an evidenced one rather than an assertion.
+
+What the passing parity test establishes, concretely: the model, prompt version, instruction
+prefix and parameter set are byte-identical to the notebook's (or the cache keys would not
+match), and the retrieval order, `tau` filter, quote verification and scoring all produce the
+same rows for three real claims — with a fake client that fails the test if the network is
+touched at all.
 
 `test_parity.py` skips with a message naming the missing files until the notebook's `E0`
 cell has been run and its output copied in. It is the test that proves this code reproduces
@@ -179,28 +203,38 @@ a second copy of the embedding matrix; **threads** because each request waits on
 rather than the CPU; **`--timeout 600`** because gunicorn's default of 30 s would kill a
 50-call analysis long before it finished.
 
-### Order of operations, and why it matters
-Do these in order. Steps 2 and 3 must not be swapped.
+### How it was set up, and the order to repeat it in
+Already done for the live service. Follow the same order if you ever rebuild it, because
+steps 2 and 3 must not be swapped.
 
-1. **Merge the phase branches into `main`.** Auto-deploy fires, but the start command is
-   still the Phase 1 probe, so nothing is exposed. Harmless on purpose.
+1. **Merge into `main`.** Auto-deploy fires, but while the start command is still the Phase 1
+   probe nothing is exposed. Harmless on purpose.
 2. **Set `APP_PASSWORD`** in Render → Environment. Hard rule 3: the URL is protected until
    the teacher or VŠE IT agrees to public use. Do this *before* step 3, or there is a window
    in which the app is live, open, and spending the university's LiteLLM key.
 3. **Change the start command and health check path** in Render → Settings. This is the step
    that makes the app live.
-4. **Verify**: `/api/health` answers 200, the root URL challenges for the password, and a
-   wrong password is refused.
+4. **Export the data only once step 3 is done.** The Phase 1 start command was
+   `python -m http.server --directory app/data`, a plain static file server with no password.
+   Committing `app/data` while that was running would have published the corpus and the full
+   judge prompt to anyone with the URL.
+5. **Verify**: `/api/health` answers 200 with `ok: true`, the root URL challenges for the
+   password, and a wrong password is refused.
 
 `LITELLM_API_KEY` and `APP_PASSWORD` are set in the dashboard only, never in Git. In
 `render.yaml` they carry `sync: false`, which tells Render to ask for the value instead of
 reading one from the file.
 
-### What works before the notebook has been exported
-With `app/data` empty, `/api/health` answers `{"ok": false}` and the page runs in demo mode
-with fictional parties. The deploy still succeeds and the health check still passes, which
-is deliberate. `/api/analyze` cannot return real results until `E0` has been run and
-`app/data` committed — see *Refresh data from the notebook* above.
+### If `app/data` is ever missing
+`app/data` is committed, so this should not happen — but if those files are removed or an
+export is half-copied, the app does not break. `/api/health` answers `200` with
+`{"ok": false}`, the health check still passes, the deploy still succeeds, and the page falls
+back to demo mode with fictional parties instead of showing an error. Only `/api/analyze`
+stops working, with a Czech 500.
+
+That is deliberate: a missing export should degrade the page, not take the service down. The
+detailed reason, including the path of the missing file, goes to the Render log only — never
+to the open `/api/health` response.
 
 ### Cold starts
 The first request after a quiet spell pays the spin-up, and the cache is empty again. See
@@ -270,8 +304,16 @@ stand regardless: pinging burns the 750 shared instance hours to keep an idle se
 it is plainly an attempt to defeat a published limit, and the outbound-traffic rule above
 shows Render does suspend services it considers greedy. Document the cold start instead.
 
-### Measurements still to take
-These need a live service with `app/data` exported, so they are open:
+### Measurements
+Measured so far:
+
+| What | Value |
+|---|---|
+| `/api/health`, warm | ~0.35 s |
+| Deploy time, clone + `pip install` + boot | ~57 s |
+| Proxy latency from Frankfurt | 0.4 s embedding, 0.9 s judge call (Phase 1 probe) |
+
+Still open — these need the dashboard or a deliberate wait:
 
 | What | Where to look |
 |---|---|
@@ -282,6 +324,10 @@ These need a live service with `app/data` exported, so they are open:
 
 Expected memory: `passage_emb.npy` is 696 × 2560 float32 ≈ **6.8 MB**, so the matrix is not
 the risk; the Python process and `openai`'s dependencies dominate. Measure rather than assume.
+
+Rough expectation for a claim with a cold cache: 51 calls at ~0.9 s each, but ten at a time
+across the thread pool, so on the order of 5–10 s — plus the spin-up if the service was idle.
+A claim already in the committed cache should return in well under a second.
 
 ### Warm start after a spin-down
 Because the filesystem is ephemeral, both caches are empty again after every spin-down,
