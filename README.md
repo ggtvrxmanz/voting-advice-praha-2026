@@ -103,11 +103,6 @@ Render for the gunicorn path.
 | S3 | `TAU`, `PROMPT_VERSION`, `rank_parties` only existed after a notebook cell injected them | the file could not run or be tested on its own; it now imports `pipeline` |
 | S4 | `debug=True` | an interactive console on a public host |
 
-One more, found while testing this phase: `/api/health` first returned the `DataMissing`
-reason verbatim, which included the absolute path of `app_config.json` — to anyone, with no
-password, since that endpoint is open on purpose. It now returns a generic Czech sentence and
-logs the detail. `tests/test_api.py::test_health_never_discloses_a_filesystem_path` guards it.
-
 ## Tests
 ```bash
 python -m pytest tests/ -q -rs      # -rs prints why anything was skipped
