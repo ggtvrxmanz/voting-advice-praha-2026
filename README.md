@@ -4,19 +4,49 @@ Czech voting advice tool: compares free-text claims with the programmes of 10 pa
 (dense retrieval + LLM judge) and ranks the parties, with verbatim quotes.
 Research notebook: `notebooks/`. Web app: `app/`. Hosting: Render (free web service).
 
-> Skeleton (Phase 1). Sections marked TODO are filled in later phases.
+> **Status.** The app is deployed and the method is extracted and tested, but `app/data` has
+> not been exported from the notebook yet, so the live service runs in demo mode and the
+> parity test still skips. See *Refresh data from the notebook*.
 
 ## Local setup
-```bash
+Python **3.13** — the same minor version as Colab and Render. Not 3.12 or 3.14: the point of
+the pin is that a test result here means something there.
+
+Windows, Command Prompt:
+```bat
 git clone <repo-url> && cd voting-advice-praha-2026
-python3.13 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+py -3.13 -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env               # then put your LiteLLM key into .env
+copy .env.example .env
+notepad .env                       :: put your LiteLLM key in, leave APP_PASSWORD empty
 ```
 
-## Phase 1 probe (temporary)
-`python scripts/probe.py` makes one embedding call and one chat call and prints `OK` or `FAIL` for each.
+macOS or Linux:
+```bash
+git clone <repo-url> && cd voting-advice-praha-2026
+python3.13 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env                # then put your LiteLLM key into .env
+```
+
+`.env` is git-ignored and must stay that way. If a key ever reaches a commit, deleting the
+file is **not** enough — the key is still in the history, so rotate it with VŠE IT first and
+then clean the history.
+
+## Check the proxy is reachable
+```bash
+python scripts/probe.py
+```
+One embedding call and one chat call, printing `OK` or `FAIL` for each, with timings and
+never the key. Useful when something stops working and you need to know whether the problem
+is the proxy, the key or the app. Last run from Render's Frankfurt instance:
+
+```
+python 3.13.18 | base_url https://litellm.vse.cz/v1 | key set: True
+OK   embedding qwen3-embedding:4b: 0.4 s | dim 2560
+OK   chat Qwen3.8-27B with seed=42: 0.9 s | '{"ok": true}'
+```
 
 ## Run the app locally
 ```bash
@@ -167,11 +197,95 @@ is deliberate. `/api/analyze` cannot return real results until `E0` has been run
 `app/data` committed — see *Refresh data from the notebook* above.
 
 ### Cold starts
-A free service spins down after 15 minutes without traffic and takes up to about a minute to
-come back, so the first request after a quiet spell is slow. We do not ping the service to
-keep it awake: Render's staff call that abuse of the free tier. Tell users instead, and
-expect the first analysis of a session to include the spin-up.
-## Free-tier limits: TODO (Phase 6)
+The first request after a quiet spell pays the spin-up, and the cache is empty again. See
+*Cold starts, and why we do not ping* under **Free-tier limits** below.
+
+## Free-tier limits
+Checked against `render.com/docs/free` and `render.com/docs/python-version` on
+**2026-11-25**. Re-check before relying on any of it; Render changes these.
+
+| Limit | Value |
+|---|---|
+| Compute | 0.1 CPU, 512 MB RAM, one instance, no scaling |
+| Spin-down | after **15 minutes** with no inbound traffic |
+| Spin-up | **about one minute**; the browser shows a loading page |
+| Instance hours | **750 per workspace per calendar month**, not per service. Spun-down time does not count. Reset monthly, no roll-over |
+| Out of hours | Render **suspends every free web service in the workspace** until the next month |
+| Filesystem | ephemeral — lost on redeploy, restart **and spin-down**. No persistent disk on free |
+| Restarts | Render **may restart a free service at any time** |
+| Postgres | one per workspace, 1 GB, **expires 30 days after creation**; 14-day grace, then deleted. No backups |
+| Key Value | one per workspace, **never persisted to disk**; data lost on any restart |
+| Not available | shell access, one-off jobs, private network traffic, more than one instance. Outbound ports 25 / 465 / 587 blocked. Rollback only to the two most recent deploys |
+
+### The limit that actually threatens this app
+> Render may suspend a free web service that initiates an uncommonly high volume of traffic
+> over the public internet — and the docs name **external API calls** as an example.
+
+Every analysed claim makes one embedding call plus `k_stance × parties` judge calls — up to
+51 outbound requests per claim, so ~255 for five claims. No numeric threshold is published.
+This is the main reason the daily judge cap in `server.py` exists: it is not only about the
+university's key, it is about not getting the service suspended. Keep the cap, and if you
+raise it, raise it knowingly.
+
+### Bandwidth and build minutes
+The docs give **no numbers** for either on free — see the dashboard's *Included Usage* page
+for the current allowance. What happens on overage:
+
+- **Bandwidth**: Render bills a supplementary amount. With no payment method on file it
+  instead **suspends all free services for the rest of the month**.
+- **Build minutes**: billed likewise; with no payment method or at the spend limit it
+  **disables new builds for the whole workspace** for the rest of the month. Running services
+  keep running on their existing build artifact.
+
+So without a card on file, an overage is not a bill — it is an outage. Worth knowing before
+the oral exam, not during it.
+
+### Python version
+The default for services created on or after 2026-11-03 is **3.14.10**. We pin 3.13:
+
+- `.python-version` with `3.13` — the patch version **may** be omitted, and Render takes the
+  latest matching patch. Our build log shows `Using Python version 3.13.18 via
+  /opt/render/project/src/.python-version`.
+- `PYTHON_VERSION` as an env var would also work but **must** be fully qualified, e.g.
+  `3.13.5`. We do not use it; the file is in Git and reviewable, the variable is not.
+
+Without the pin this service would be on 3.14, not the 3.13 the notebook and Colab use.
+
+### Cold starts, and why we do not ping
+The first request after a quiet spell pays the ~1 minute spin-up, and the ephemeral
+filesystem means the in-memory judge cache is **empty again** after every spin-down, restart
+and deploy. So the first analysis of a session is slow twice over: the spin-up, then a full
+set of uncached LLM calls.
+
+We do not run a keep-alive pinger. To be accurate about why: Render's free-tier docs say
+**nothing** about keep-alive pinging either way — the "Render staff call it abuse" line in the
+migration brief comes from community threads, not documentation. The reasons to leave it alone
+stand regardless: pinging burns the 750 shared instance hours to keep an idle service awake,
+it is plainly an attempt to defeat a published limit, and the outbound-traffic rule above
+shows Render does suspend services it considers greedy. Document the cold start instead.
+
+### Measurements still to take
+These need a live service with `app/data` exported, so they are open:
+
+| What | Where to look |
+|---|---|
+| Peak memory against the 512 MB ceiling | Render dashboard → Metrics |
+| Cold-start time, first request after spin-down | time a request after 15+ idle minutes |
+| Warm latency per claim | `/api/analyze` with one claim, cache cold then warm |
+| Instance hours used per month | dashboard → Included Usage |
+
+Expected memory: `passage_emb.npy` is 696 × 2560 float32 ≈ **6.8 MB**, so the matrix is not
+the risk; the Python process and `openai`'s dependencies dominate. Measure rather than assume.
+
+### Known gap: no warm start after a spin-down
+`APP_STATE.md` §8.4 lists two optional exports we have **not** implemented:
+`query_cache.json` and `app_stance_cache.jsonl`, committed so the demo claims answer from
+cache instead of calling the model. Without them, every spin-down makes the first demo
+analysis slow and expensive, which is exactly the wrong moment at a presentation.
+
+Adding them is a small change to the `E0` cell plus a loader in `pipeline.py` that fills
+`QUERY_CACHE` and `JUDGE_CACHE` at startup from committed files. Worth doing before any live
+demo. Not done here because it was not needed to get the app deployed.
 
 ## Team rules
 - Work on a branch, open a pull request, one reviewer approves, then merge. `main` deploys automatically.
