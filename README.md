@@ -18,8 +18,8 @@ retrieval, the LLM judge and the evaluation all live there. This repository hold
 
 **How to connect:**
 
-- username: anything (it may stay empty)
-- password: `Praha`
+- username: *can be anything or empty*
+- password: *Please refer to the report on sharpoint for password* 
 
 Verified on the deployed service:
 
@@ -102,14 +102,6 @@ demo safe.
 - The client address comes from `X-Forwarded-For`, which is only trustworthy because Render's
   proxy overwrites it.
 
-## Bugs fixed during the migration (Failure Journal)
-| # | Was | Effect |
-|---|---|---|
-| S1 | the validation branch returned `queries` before it was assigned | 0 or 6 claims raised `NameError` → HTML 500 instead of a Czech 400 |
-| S2 | the success path returned no `ranking` | `index.html` fell back to its own `aggregate()`: no contradiction rule, different coverage. **Users were not seeing the evaluated ranking rule.** Fixing it restores the evaluated method; it is not a change of method |
-| S3 | `TAU`, `PROMPT_VERSION`, `rank_parties` only existed after a notebook cell injected them | the file could not run or be tested on its own; it now imports `pipeline` |
-| S4 | `debug=True` | an interactive console on a public host |
-
 ## Tests
 ```bash
 python -m pytest tests/ -q -rs      # -rs prints why anything was skipped
@@ -147,86 +139,10 @@ then misreported as a proxy outage.
 `test_parity.py` skips with a message naming the missing files if the notebook's `E0` output
 has not been copied in.
 
-## Refresh data from the notebook
-The app never holds its own copy of the method: the notebook writes the config the app reads,
-so the two cannot drift apart. The `E0 | Export for the web app` cell does the whole export.
-It makes no API call and changes no method.
-
-1. Open the notebook in Colab (see [Run the notebook in Colab](#run-the-notebook-in-colab)) and
-   run it down to `D1` (the app adapter), so `score_claim`, the query cache and the judge cache
-   all exist in the session.
-2. Run the `E0` cell. It writes into `<PROJECT_DIR>/export/`:
-
-   | File | What it is |
-   |---|---|
-   | `app/data/passages.csv` | the 696 non-noise passages (`passage_id, party, page, text`), in `df_clust` order |
-   | `app/data/passage_emb.npy` | `E_qwen`, float32, **same row order** as `passages.csv` |
-   | `app/data/app_config.json` | model, params, prompt text, `k_stance`, `tau`, corpus version, SHA-256 of the two files above |
-   | `app/data/app_stance_cache.jsonl` | every cached judge answer, for the warm start |
-   | `app/data/query_cache.json` | their query vectors, for the warm start |
-   | `tests/fixtures/parity_expected.json` | 3 claims with their judge answers and the expected `score_claim` rows |
-   | `tests/fixtures/parity_query_vectors.npz` | the query vectors those 3 claims used |
-
-3. Copy `export/app/data` over `app/data`, and `export/tests/fixtures` over `tests/fixtures`.
-4. Commit and push. `main` deploys automatically. `app/data` is read-only at run time.
-
-Why the export is generated and not written by hand: `app_config.json` takes the judge from
-`APP_MODEL`, which cell `C3` sets to the smoke-test winner. `P["llm_model"]` in cell 3 is only a
-starting value and is **not** the model that was evaluated, so retyping it would silently ship the
-wrong judge. The same applies to `tau`, which `C6` freezes to a file.
-
-If `E0` stops with `need 3 fully cached claims`, the judge cache only holds `D1`'s own test claim.
-Run `score_claim` once per extra claim in a scratch cell (about 50 judge calls each), then re-run `E0`.
-
 ## Deploy to Render
 One free web service in Frankfurt, auto-deploying from `main`. The settings live in
-[`render.yaml`](render.yaml) as the documented truth; read it before changing anything in
-the dashboard. The running service was created through the dashboard, so Render does **not**
+[`render.yaml`](render.yaml) as the documented truth. The running service was created through the dashboard, so Render does **not**
 apply that file to it; the file is there to be reviewed and to recreate the service exactly.
-
-| Setting | Value |
-|---|---|
-| Build command | `pip install -r requirements.txt` |
-| Start command | `gunicorn --chdir app server:app --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 600` |
-| Health check path | `/api/health` |
-| Region / plan | Frankfurt / Free |
-| Branch | `main`, auto-deploy on commit |
-
-Why the start command reads like that: **one worker** because the query cache, the judge
-cache and the rate-limit counters all live in one process's memory and 512 MB will not hold
-a second copy of the embedding matrix; **threads** because each request waits on the proxy
-rather than the CPU; **`--timeout 600`** because gunicorn's default of 30 s would kill a
-50-call analysis long before it finished.
-
-### How it was set up, and the order to repeat it in
-Already done for the live service. Follow the same order if you ever rebuild it, because
-steps 2 and 3 must not be swapped.
-
-1. **Merge into `main`.** Auto-deploy fires, but while the start command is still the Phase 1
-   probe nothing is exposed.
-2. **Set `APP_PASSWORD`** in Render → Environment. The URL stays protected until the teacher
-   or VŠE IT agrees to public use. Do this *before* step 3, or there is a window in which the
-   app is live, open, and spending the university's LiteLLM key.
-3. **Change the start command and health check path** in Render → Settings. This is the step
-   that makes the app live.
-4. **Export the data only once step 3 is done.** The Phase 1 start command was
-   `python -m http.server --directory app/data`, a plain static file server with no password.
-   Committing `app/data` while that was running would have published the corpus and the full
-   judge prompt to anyone with the URL.
-5. **Verify**: `/api/health` answers 200 with `ok: true`, the root URL challenges for the
-   password, and a wrong password is refused.
-
-`LITELLM_API_KEY` and `APP_PASSWORD` are set in the dashboard only, never in Git. In
-`render.yaml` they carry `sync: false`, which tells Render to ask for the value instead of
-reading one from the file.
-
-### If `app/data` is ever missing
-`app/data` is committed, so this should not happen. If those files are removed or an
-export is half-copied, the app does not break: `/api/health` answers `200` with
-`{"ok": false}`, the health check still passes, the deploy still succeeds, and the page falls
-back to demo mode with fictional parties instead of showing an error. Only `/api/analyze`
-stops working, with a Czech 500. The detailed reason, including the path of the missing file,
-goes to the Render log only, never to the open `/api/health` response.
 
 ## Free-tier limits
 Checked against `render.com/docs/free` and `render.com/docs/python-version` on
@@ -296,34 +212,4 @@ vectors to `app/data/query_cache.json`, both committed. `pipeline.warm_start()` 
 when `server.py` is imported, once per gunicorn worker. A claim that was run in the notebook
 then answers from cache on the deployed app, with no model call at all.
 
-- **A stale file cannot give a wrong answer.** Every key is a hash of the configuration, so
-  if the model, prompt version, parameters or instruction prefix change, the entries are never
-  found and the app calls the model as usual. `test_a_stale_file_is_useless_but_never_wrong`
-  pins this.
-- **A corrupt file cannot take the app down.** A damaged file is logged and skipped; one bad
-  line in the `.jsonl` does not lose the others.
 
-Entries already in memory always win, so a live answer is never overwritten by a committed file.
-The files hold judge answers and query vectors only, no key. They grow with every claim run in
-the notebook; if the repository gets too large, re-export from a trimmed cache.
-
-### Measurements
-| What | Value |
-|---|---|
-| `/api/health`, warm | ~0.35 s |
-| Deploy time, clone + `pip install` + boot | ~57 s |
-| Proxy latency from Frankfurt | 0.4 s embedding, 0.9 s judge call |
-
-Still open:
-
-| What | Where to look |
-|---|---|
-| Peak memory against the 512 MB ceiling | Render dashboard → Metrics |
-| Cold-start time, first request after spin-down | time a request after 15+ idle minutes |
-| Warm latency per claim | `/api/analyze` with one claim, cache cold then warm |
-| Instance hours used per month | dashboard → Included Usage |
-
-`passage_emb.npy` is 696 × 2560 float32 ≈ **6.8 MB**, so the matrix is not the memory risk;
-the Python process and its dependencies dominate. A claim with a cold cache makes 51 calls at
-~0.9 s each, ten at a time, so roughly 5–10 s plus any spin-up. A cached claim should return in
-well under a second.
