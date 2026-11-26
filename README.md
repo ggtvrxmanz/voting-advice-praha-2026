@@ -8,8 +8,10 @@ Research notebook: `notebooks/`. Web app: `app/`. Hosting: Render (free web serv
 > password. The data is exported from the notebook, the parity test passes,
 > and the app answers from the real model.
 
-How to connect:
+**How to connect:**
+
 username:
+
 password: Praha
 
 Verified on the deployed service:
