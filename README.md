@@ -9,7 +9,7 @@ retrieval, the LLM judge and the evaluation all live there. This repository hold
 
 | | Link |
 |---|---|
-| Research notebook (Colab, original) | <COLAB_LINK> |
+| Research notebook (Colab, original) | [<COLAB_LINK>](https://drive.google.com/drive/folders/1XA7UmsEnbdd_hmN_VefRlC4Hjl28ftIO) |
 | Web app (Render, free web service) | <https://voting-advice-praha-2026.onrender.com> |
 
 > **Status: live.** <https://voting-advice-praha-2026.onrender.com> is behind a shared
