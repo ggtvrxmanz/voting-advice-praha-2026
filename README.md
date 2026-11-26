@@ -47,7 +47,7 @@ so a folder that was only shared with you is invisible until you add a shortcut 
    *File → Save a copy in Drive* and work in the copy.
 3. **Add the API key as a Colab secret.** Key icon in the left panel → *Add new secret* →
    name `LITELLM_API_KEY`, value = your VŠE LiteLLM key → switch on *Notebook access*.
-   The key is never typed into a cell.
+   The key is never typed into a cell. Sharing of API key will have to be approved by Ing. Filip Vencovský, Ph.D.
 4. **Run cells 1–3** (installs, Drive mount, paths and config). Allow the Drive access when asked.
    If the folder is not found, the cell says so; use *Runtime → Disconnect and delete runtime*
    and run it again (a new shortcut is only seen after a fresh mount).
