@@ -1,0 +1,206 @@
+passage_id,text,key,correct,source
+ano_010_006,nejstarším seniorům,starý seniorům,0.0,gliner
+ano_010_006,Městské části,městský část,0.0,gliner
+ano_002_001,Praha,praha,1.0,gliner
+ano_002_001,lidem,lid,0.0,gliner
+ano_010_001,Praha,praha,1.0,gliner
+ano_010_001,Vltava,vltava,1.0,gliner
+ano_010_001,dětem,dítě,0.0,gliner
+ano_010_001,seniorům,seniorům,0.0,gliner
+ano_004_005,Praha,praha,1.0,gliner
+ano_004_005,zdravotní sestra,zdravotní sestra,0.0,gliner
+ano_003_005,metra,metro,0.0,gliner
+jsme_praha_001_005,obec,obec,0.0,gliner
+jsme_praha_004_003,Bubenče,bubeneč,1.0,gliner
+jsme_praha_004_003,Dejvic,dejvice,1.0,gliner
+jsme_praha_004_003,Střešovic,střešovice,1.0,gliner
+jsme_praha_004_003,Hanspaulky,hanspaulky,1.0,gliner
+jsme_praha_004_003,Praha 6,praha 6,1.0,gliner
+jsme_praha_001_011,JSME TEAM,být team,0.0,gliner
+jsme_praha_001_011,MUDr. Bc. Marek Hilšer,mudr bc marka hilšer,1.0,gliner
+jsme_praha_001_001,politici,politik,0.0,gliner
+jsme_praha_001_001,JSME PRA- HA,být pra ha,0.0,gliner
+jsme_praha_005_001,pražský radní,pražský radní,0.0,gliner
+jsme_praha_005_001,rozvoji,rozvoj,0.0,gliner
+levice_004_002,Praha,praha,1.0,gliner
+levice_004_002,univerzitní město,univerzitní město,0.0,gliner
+levice_004_002,veřejnými vysokými školami,veřejný vysoký škola,0.0,gliner
+levice_004_002,řadě lidí,řada člověk,0.0,gliner
+levice_006_003,Středočeským krajem,středočeský kraj,1.0,gliner
+levice_006_003,rezidenčních oblastech,rezidenčních oblast,0.0,gliner
+levice_002_001,Prahu,praha,0.0,gliner
+levice_009_002,Anenskou čtvrť,anenskou čtvrť,0.0,gliner
+levice_009_002,Amsterodamu,amsterodam,1.0,gliner
+levice_009_002,Prahy,praha,0.0,gliner
+levice_005_001,historické centrum,historický centrum,0.0,gliner
+levice_005_001,nemocnicemi,nemocnice,0.0,gliner
+levice_005_001,úřady,úřad,0.0,gliner
+levice_005_001,domovy pro seniory,domov pro senior,0.0,gliner
+pirati_001_183,Praha,praha,1.0,gliner
+pirati_001_183,Divadle pod Palmovkou,divadlo pod palmovkou,1.0,gliner
+pirati_001_087,magistrátu,magistrát,1.0,gliner
+pirati_001_110,Občané,občan,0.0,gliner
+pirati_001_110,města,město,0.0,gliner
+pirati_001_110,Chytrý svoz odpadu,chytrý svoz odpad,0.0,gliner
+pirati_001_110,Pokročilá videoanalýza dopravního proudu,pokročilý videoanalýza dopravní proud,0.0,gliner
+pirati_001_189,městských budovách,městský budova,0.0,gliner
+prahasobe_roadmap_005,Brownfieldy,brownfield,0.0,gliner
+prahasobe_roadmap_005,čtvrti,čtvrť,0.0,gliner
+prahasobe_detail_047,Libeňského mostu,libeňský most,1.0,gliner
+prahasobe_detail_047,Modřanech,modřany,1.0,gliner
+prahasobe_detail_047,Holešovicích,holešovice,1.0,gliner
+prahasobe_detail_002,Trojskou lávku,trojský lávku,1.0,gliner
+prahasobe_detail_002,Štvanici,štvanice,1.0,gliner
+prahasobe_detail_002,Dvorecký most,dvorecký most,1.0,gliner
+prahasobe_detail_002,Barrandovský,barrandovský,1.0,gliner
+prahasobe_detail_002,Hlávkova,hlávkov,1.0,gliner
+prahasobe_detail_002,Libeňského mostu,libeňský most,1.0,gliner
+prahasobe_detail_002,současná koalice,současný koalice,0.0,gliner
+prahasobe_roadmap_001,Praha,praha,1.0,gliner
+spd_001_010,Prahu,praha,1.0,gliner
+spd_001_010,Airbnb,airbnb,1.0,gliner
+spd_001_010,centra,centrum,0.0,gliner
+spd_001_010,turistům,turista,0.0,gliner
+spd_001_010,Praze,praha,1.0,gliner
+spd_001_012,Praha,praha,1.0,gliner
+spd_001_012,městských společností,městský společnost,0.0,gliner
+spd_001_012,opravy obecních bytů,oprava obecní byt,0.0,gliner
+spd_001_012,družstevní výstavba,družstevní výstavba,0.0,gliner
+spd_001_012,Prahy,praha,1.0,gliner
+spd_001_001,současná koalice,současný koalice,0.0,gliner
+spd_001_001,Prahy,praha,1.0,gliner
+spd_001_001,řidiči,řidič,0.0,gliner
+spd_001_001,cyklistům,cyklista,0.0,gliner
+spd_001_013,družstevní výstavbu,družstevní výstavba,0.0,gliner
+spd_001_013,Praha,praha,1.0,gliner
+spd_001_013,učitelům,učitel,0.0,gliner
+spd_001_013,policistům,policista,0.0,gliner
+spd_001_013,strážníkům,strážník,0.0,gliner
+spd_001_013,hasičům,hasič,0.0,gliner
+spd_001_013,zdravotníkům,zdravotník,0.0,gliner
+spd_001_013,pracovníkům sociálních služeb,pracovník sociální služba,0.0,gliner
+spd_001_006,Praze,praha,1.0,gliner
+spd_001_006,Housing First,housing first,0.0,gliner
+spd_001_006,nájemníky,nájemník,0.0,gliner
+spd_001_006,učitele,učitel,0.0,gliner
+spd_001_006,policisty,policista,0.0,gliner
+spd_001_006,hasiče,hasič,0.0,gliner
+spd_001_006,zdravotníky,zdravotník,0.0,gliner
+spojena_levice_004_001,městské policie,městský policie,0.0,gliner
+spojena_levice_004_001,strážníků,strážník,0.0,gliner
+spojena_levice_004_001,MHD,mhd,1.0,gliner
+spojena_levice_004_003,Praha,praha,1.0,gliner
+spojena_levice_001_002,Praha,praha,1.0,gliner
+spojena_levice_001_002,Spojená levice,spojený levice,1.0,gliner
+spojena_levice_001_002,Prahu,praha,1.0,gliner
+spojena_levice_001_002,učitelé,učitel,0.0,gliner
+spojena_levice_001_002,strážníci,strážník,0.0,gliner
+spojena_levice_001_002,člověk,člověk,0.0,gliner
+spojena_levice_004_004,57 městských částí,57 městský část,0.0,gliner
+spojena_levice_004_004,Pražské městské společnosti,pražský městský společnost,0.0,gliner
+spojena_levice_002_003,Prahy,praha,1.0,gliner
+spojena_levice_002_003,Praze,praha,1.0,gliner
+spojena_levice_002_003,učitele,učitel,0.0,gliner
+spojena_levice_002_003,lidi,člověk,0.0,gliner
+spolu-portlik_001_010,město,město,0.0,gliner
+spolu-portlik_001_012,Prahy,praha,1.0,gliner
+spolu-portlik_001_001,PRAZE,praha,1.0,gliner
+spolu-portlik_001_001,PRAHY,praha,1.0,gliner
+spolu-portlik_001_001,projekt,projekt,0.0,gliner
+spolu-portlik_001_014,Pražané,pražan,1.0,gliner
+starostove_006_002,Prahu,praha,1.0,gliner
+starostove_006_002,Vltavské filharmonie,vltavský filharmonie,1.0,gliner
+starostove_006_002,Nadační fond Vltavské filharmonie,nadační fond vltavský filharmonie,1.0,gliner
+starostove_006_002,Karlínská kasárna,karlínská kasárna,1.0,gliner
+starostove_006_002,Nákladového nádraží Žižkov,nákladový nádraží žižkov,1.0,gliner
+starostove_006_002,Smíchově,smíchov,1.0,gliner
+starostove_006_002,Strahovského stadionu,strahovský stadion,1.0,gliner
+starostove_006_002,Národní a Městskou knihovnou,národní a městský knihovna,1.0,gliner
+starostove_006_002,multifunkčního centra literatury,multifunkční centrum literatura,0.0,gliner
+starostove_025_003,Úřad,úřad,0.0,gliner
+starostove_025_003,lidem,lid,0.0,gliner
+starostove_025_003,Prahy,praha,1.0,gliner
+starostove_025_003,občanů,občan,0.0,gliner
+starostove_011_001,IKAP III,ikap iii,0.0,gliner
+starostove_011_001,učitelů,učitel,0.0,gliner
+starostove_011_001,psychologů,psycholog,0.0,gliner
+starostove_011_001,Science Comes to Town 2028,science comes ten town 2028,0.0,gliner
+starostove_011_001,Heidelberg,heidelberg,1.0,gliner
+starostove_011_001,Prahu,praha,1.0,gliner
+starostove_011_001,Varšavu,varšava,1.0,gliner
+starostove_005_001,Praha,praha,1.0,gliner
+starostove_014_002,Praha,praha,1.0,gliner
+starostove_014_002,nově rozvíjených územích,nově rozvíjený území,0.0,gliner
+starostove_014_002,města,město,0.0,gliner
+starostove_014_002,městských částí,městský část,0.0,gliner
+voluntia_001_037,dostavbu městského okruhu,dostavba městský okruh,0.0,gliner
+voluntia_001_037,Ředitelstvím silnic a dálnic,ředitelství silnice a dálnice,1.0,gliner
+voluntia_001_037,dostavbě pražského okruhu,dostavba pražský okruh,0.0,gliner
+voluntia_001_017,lidé,člověk,0.0,gliner
+voluntia_001_005,centrálního orgánu,centrální orgán,0.0,gliner
+voluntia_001_005,jednotlivce,jednotlivec,0.0,gliner
+voluntia_001_005,stavba mostu,stavba most,0.0,gliner
+voluntia_001_005,severu Prahy,sever praha,1.0,gliner
+voluntia_001_010,Praze,praha,1.0,gliner
+voluntia_001_010,UNESCO,unesco,1.0,gliner
+voluntia_001_010,Výtoňský most,výtoňský most,1.0,gliner
+voluntia_001_010,Nového Žižkova,nový žižkov,1.0,gliner
+voluntia_001_010,Pankrácké pláni,pankrác pláň,1.0,gliner
+voluntia_001_010,Prahy,praha,1.0,gliner
+voluntia_001_010,Pražského hradu,pražský hrad,1.0,gliner
+voluntia_001_010,organizaci,organizace,0.0,gliner
+voluntia_001_046,magistrátu,magistrát,0.0,gliner
+ano_002_001,Evropské unie,evropský unie,1,nametag
+ano_002_001,Pražan,pražanka,1,nametag
+ano_010_001,Bezpečná,bezpečný,0,nametag
+ano_004_005,Bezpečná Praha,bezpečný praha,0,nametag
+jsme_praha_004_003,Listina základních práv a svobod,listina základní právo a svoboda,1,nametag
+jsme_praha_001_011,MUDr . Bc .,mudr bc,1,nametag
+jsme_praha_001_011,Marek Hilšer,marka hilšer,1,nametag
+jsme_praha_001_011,PhD .,phd,1,nametag
+jsme_praha_001_001,PRA - HA,pra ha,0,nametag
+levice_006_003,Mobilita,mobilita,0,nametag
+levice_006_003,Finska,finsko,1,nametag
+levice_009_002,Metropolitní plán,metropolitní plán,1,nametag
+levice_009_002,Pražské památkové rezervace,pražský památkový rezervace,1,nametag
+levice_005_001,Itálie,itálie,1,nametag
+levice_005_001,Španělska,španělsko,1,nametag
+levice_005_001,Vltavy,vltava,1,nametag
+levice_005_001,Openstage,openstage,0,nametag
+pirati_001_183,ČR,čr,1,nametag
+pirati_001_016,Pražské památkové rezervaci,pražský památkový rezervace,1,nametag
+pirati_001_016,Prahy,praha,1,nametag
+pirati_001_087,Zodpovědná správa městské půdy,zodpovědný správa městský půda,0,nametag
+pirati_001_087,Nová pravidla pro prodej městských pozemků,nový pravidlo pro prodej městský pozemek,0,nametag
+pirati_001_087,Pravidla pro regulaci reklamy,pravidlo pro regulace reklama,0,nametag
+pirati_001_110,Golemio,golemio,1,nametag
+prahasobe_roadmap_005,Metro O,metro o,1,nametag
+prahasobe_roadmap_005,Pražanů,pražan,1,nametag
+prahasobe_detail_047,VLTAVA,vltava,1,nametag
+prahasobe_detail_047,U Vody,u voda,1,nametag
+prahasobe_detail_002,Mánesova,mánesova,1,nametag
+prahasobe_detail_002,Čechova mostu,čechova most,1,nametag
+prahasobe_roadmap_001,Bytovice,bytovice,0,nametag
+spd_001_010,Pražanů,pražan,1,nametag
+spojena_levice_004_001,Praze,praha,1,nametag
+spojena_levice_004_003,Vltavy,vltava,1,nametag
+spojena_levice_001_002,Pražanům,pražanům,1,nametag
+spojena_levice_001_002,Spojená levice pro Prahu,spojený levice pro praha,1,nametag
+spojena_levice_001_002,MHD,mhd,1,nametag
+spojena_levice_004_004,DPP,dpp,1,nametag
+spojena_levice_004_004,IT,it,0,nametag
+spolu-portlik_001_012,EVROPSKÉ CENTRUM BYZNYSU,evropský centrum byznys,1,nametag
+spolu-portlik_001_012,One - Stop Shop,one stopa shop,1,nametag
+spolu-portlik_001_001,PRAŽANÉ,pražan,1,nametag
+spolu-portlik_001_014,PRAŽANDA,pražanda,1,nametag
+starostove_006_002,Nákladového nádraží,nákladový nádraží,1,nametag
+starostove_006_002,Žižkov,žižkov,1,nametag
+starostove_006_002,Evžena Rošického,evžena rošický,1,nametag
+starostove_006_002,náměstí Na Knížecí,náměstí na knížecí,1,nametag
+starostove_006_002,Letňanech,letňany,1,nametag
+starostove_006_002,Národní,národní,1,nametag
+starostove_006_002,Městskou knihovnou,městský knihovna,1,nametag
+starostove_025_003,Pražana,pražana,1,nametag
+starostove_011_001,Erasmus,erasmus,1,nametag
+voluntia_001_017,Praze,praha,1,nametag
+voluntia_001_005,Prahy,praha,1,nametag

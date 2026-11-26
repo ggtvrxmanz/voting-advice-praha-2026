@@ -1,0 +1,57 @@
+﻿thesis_id,party,passage_id,rank_in_party,retriever,score,relevant,stance,confidence,quote,quote_ok,model,prompt_version,lang,error,rank_in_thesis
+q00,starostove,starostove_008_002,1,dense,0.6917543411254883,True,1.0,1.0,Dotáhneme výstavbu metra D,True,Qwen3.8-27B,v3,cs,,1
+q00,pirati,pirati_001_061,1,dense,0.6771172285079956,True,1.0,1.0,Dokončíme ražbu tunelů metra D z Písnice k Nádraží Krč a budeme hlídat harmonogram pro zprovoznění prvního provozního úseku metra D v roce 2032.,True,Qwen3.8-27B,v3,cs,,2
+q00,pirati,pirati_001_048,2,dense,0.6675227880477905,True,1.0,1.0,Pokračování výstavby metra D v úseku Pankrác – Písnice.,True,Qwen3.8-27B,v3,cs,,3
+q00,prahasobe,prahasobe_detail_001,1,dense,0.6487507820129395,True,1.0,1.0,ZAČALI JSME STAVĚT METRO D – A STAVBU DOTÁHNEME!,True,Qwen3.8-27B,v3,cs,,4
+q00,starostove,starostove_008_003,2,dense,0.6115370988845825,True,1.0,1.0,"Budeme pokračovat ve výstavbě metra D, udržíme ji v tempu a připravíme navazující úseky.",True,Qwen3.8-27B,v3,cs,,5
+q00,spojena_levice,spojena_levice_002_001,1,dense,0.5953176617622375,True,1.0,1.0,Metro D – Dokončení trasy Jih – Pankrác – Nusle – nám. Míru – hl. nádraží – Žižkov – Vysočany.,True,Qwen3.8-27B,v3,cs,,6
+q00,spolu-portlik,spolu-portlik_001_009,3,dense,0.5092129111289978,True,0.5,0.75,"Nedopustím, aby tendry na další úseky metra D měly skoro tříleté zpoždění, jako tomu bylo v případě toho posledního.",True,Qwen3.8-27B,v3,cs,,7
+q01,voluntia,voluntia_001_063,2,dense,0.6217501759529114,True,1.0,1.0,"Ačkoliv jde o extrémně nepopulární krok, který může působit jako marketingová sebevražda, považujeme za nutné ceny celoročního kupónu zvýšit.",True,Qwen3.8-27B,v3,cs,,1
+q01,spojena_levice,spojena_levice_002_001,1,dense,0.5090314745903015,True,-1.0,1.0,Roční kupon za 3 650 Kč nezdražíme.,True,Qwen3.8-27B,v3,cs,,2
+q01,levice,levice_006_002,1,dense,0.490836888551712,True,-1.0,1.0,příjmy z parkovného umožňovaly zlevňování jízdného městské hromadné dopravy. MHD chceme zdarma,True,Qwen3.8-27B,v3,cs,,3
+q02,starostove,starostove_007_002,1,dense,0.7303237915039062,True,1.0,1.0,Zahájíme výstavbu 2 000 městských bytů v připravených lokalitách.,True,Qwen3.8-27B,v3,cs,,1
+q02,starostove,starostove_007_003,2,dense,0.6929453611373901,True,1.0,1.0,Zahájíme výstavbu 2 000 městských bytů. Cílem je do roku 2050 zvýšit podíl města v bytovém fondu z 5 % na 10 %.,True,Qwen3.8-27B,v3,cs,,2
+q02,prahasobe,prahasobe_detail_008,1,dense,0.6886191964149475,True,1.0,1.0,Budeme pokračovat v systematické údržbě a rekonstrukci bytů patřících městu a další tisíce postavíme a nakoupíme.,True,Qwen3.8-27B,v3,cs,,3
+q02,starostove,starostove_005_002,3,dense,0.6868604421615601,True,1.0,1.0,Rozběhneme výstavbu 2 000 městských bytů na pozemcích města a pražských brownfieldech.,True,Qwen3.8-27B,v3,cs,,4
+q02,prahasobe,prahasobe_roadmap_001,2,dense,0.6765561103820801,True,1.0,1.0,zahájíme přípravu stavby 8000 nových městských bytů,True,Qwen3.8-27B,v3,cs,,5
+q02,pirati,pirati_001_002,5,dense,0.6274350881576538,True,1.0,1.0,"Zajistíme, že každý rok Praha postaví několik stovek bytů.",True,Qwen3.8-27B,v3,cs,,6
+q02,spojena_levice,spojena_levice_001_003,1,dense,0.6212708950042725,True,1.0,1.0,"Město bude aktivním developerem, ne jen regulátorem. Obecní nájemní byty – Masivní výstavba obecních nájemních a družstevních bytů",True,Qwen3.8-27B,v3,cs,,7
+q02,ano,ano_005_004,3,dense,0.6140272617340088,True,1.0,1.0,"Vlastní výstavba v režii města: rozhýbeme projekty, které leží v šuplíku, a dostaneme je do 2 let na staveniště.",True,Qwen3.8-27B,v3,cs,,8
+q02,starostove,starostove_007_001,4,dense,0.6353594064712524,True,1.0,0.75,"Praha musí stavět dostupné městské bydlení pro lidi, které potřebuje.",True,Qwen3.8-27B,v3,cs,,9
+q02,ano,ano_006_004,4,dense,0.5988999009132385,True,1.0,0.75,Na strategických pozemcích bude Praha sama stavět městské a dostupné nájemní bydlení.,True,Qwen3.8-27B,v3,cs,,10
+q02,levice,levice_002_002,2,dense,0.575850784778595,True,1.0,0.75,"Praha musí potřebný bytový fond budovat mnohem aktivněji než dosud – jednak sama na pozemcích, které ještě nerozprodala",True,Qwen3.8-27B,v3,cs,,11
+q02,spd,spd_001_013,2,dense,0.671310305595398,True,0.5,0.75,"Opravit prázdné obecní byty, rozjet družstevní výstavbu a vytvořit podmínky pro vznik nových bytů.",True,Qwen3.8-27B,v3,cs,,12
+q02,pirati,pirati_001_007,2,dense,0.644965410232544,True,0.5,0.75,"až 30 % bytů z nové výstavby přešlo do dlouhodobého užívání města, a to aspoň na 30 let.",True,Qwen3.8-27B,v3,cs,,13
+q02,voluntia,voluntia_001_007,3,dense,0.5428426265716553,True,-0.5,0.75,"Tohle řešení sice považujeme za mnohem méně škodlivé než vyvlastňování bytů a kompletní ignorování nízké nabídky na trhu, nicméně stále neodráží tu primární příčinu.",True,Qwen3.8-27B,v3,cs,,14
+q03,ano,ano_005_008,1,dense,0.7773134708404541,True,1.0,1.0,"zavedeme přísná pravidla pro krátkodobé pronájmy: povinnou registraci, limit dnů pro pronájem celého bytu a nejpřísnější režim v přetíženém centru",True,Qwen3.8-27B,v3,cs,,1
+q03,spojena_levice,spojena_levice_001_004,1,dense,0.7457864284515381,True,1.0,1.0,Přísná evidence krátkodobých pobytů a omezení pronájmů přes Airbnb v bytovém fondu.,True,Qwen3.8-27B,v3,cs,,2
+q03,levice,levice_009_001,2,dense,0.6885747909545898,True,1.0,1.0,"Prosadíme rovněž vymáhání stavební legislativy, aby se krátkodobé ubytování neprovozovalo v bytech",True,Qwen3.8-27B,v3,cs,,3
+q03,prahasobe,prahasobe_roadmap_017,1,dense,0.7272106409072876,True,1.0,0.75,Budeme prosazovat regulaci Airbnb a krátkodobého ubytování.,True,Qwen3.8-27B,v3,cs,,4
+q03,pirati,pirati_001_009,1,dense,0.6865532994270325,True,1.0,0.75,"Dlouhodobě usilujeme o to, aby Praha mohla regulovat ubytovávání turistů v bytech s cílem zajistit, aby byty byly využívány k bydlení.",True,Qwen3.8-27B,v3,cs,,5
+q03,prahasobe,prahasobe_roadmap_006,2,dense,0.6791297197341919,True,1.0,0.75,Přitvrdíme vůči službám typu Airbnb.,True,Qwen3.8-27B,v3,cs,,6
+q03,spd,spd_001_010,1,dense,0.7928310632705688,True,0.5,0.75,Chceme: - přiměřenou regulaci krátkodobých pronájmů,True,Qwen3.8-27B,v3,cs,,7
+q03,ano,ano_011_005,3,dense,0.6252020597457886,True,0.5,0.75,zmocnění města regulovat krátkodobé pronájmy,True,Qwen3.8-27B,v3,cs,,8
+q03,voluntia,voluntia_001_022,1,dense,0.7767460346221924,True,-1.0,1.0,"A pokud se někdo rozhodne využívat svůj byt ke krátkodobému pronájmu, tak tím rozhodně do majetku ani svobod jiného člověka nezasahuje.",True,Qwen3.8-27B,v3,cs,,9
+q04,starostove,starostove_018_005,1,dense,0.7424514293670654,True,1.0,1.0,Posílíme složky IZS a získáme pro Prahu 270 chybějících strážníků.,True,Qwen3.8-27B,v3,cs,,1
+q04,starostove,starostove_019_001,2,dense,0.7239764928817749,True,1.0,1.0,Navýšíme prostředky na nábor chybějících 270 strážníků,True,Qwen3.8-27B,v3,cs,,2
+q05,pirati,pirati_001_025,1,dense,0.6065258383750916,True,1.0,1.0,"Budeme pokračovat v rozšiřování výsadby stromů, keřů a další zeleně v ulicích, parcích, na náměstích i sídlištích.",True,Qwen3.8-27B,v3,cs,,1
+q05,ano,ano_007_002,1,dense,0.5851302742958069,True,1.0,1.0,"doplníme stromy, stín a pítka tam, kde se dnes ulice v létě rozpalují",True,Qwen3.8-27B,v3,cs,,2
+q05,pirati,pirati_001_149,4,dense,0.5761800408363342,True,1.0,1.0,"Nahradíme je propustnými povrchy, trvalkovými záhony a masivní výsadbou nových uličních stromořadí",True,Qwen3.8-27B,v3,cs,,3
+q05,prahasobe,prahasobe_detail_033,5,dense,0.5114490985870361,True,1.0,1.0,"Na řadě míst je už dlouho potřeba výměna povrchu, terénní úpravy, osazení nových stromů a záhonů či lepší osvětlení.",True,Qwen3.8-27B,v3,cs,,4
+q06,pirati,pirati_001_063,1,dense,0.6716749668121338,True,0.5,0.75,"Zvýšíme četnost spojů tam, kde to je možné a potřebné vzhledem k vytíženosti.",True,Qwen3.8-27B,v3,cs,,1
+q08,starostove,starostove_024_003,1,dense,0.6788455247879028,True,1.0,1.0,Navýšíme objem finančních prostředků v kapitole kultura na úroveň adekvátní současné kvalitě a rozsahu pražské kulturní nabídky,True,Qwen3.8-27B,v3,cs,,1
+q08,levice,levice_005_002,1,dense,0.6509255766868591,True,1.0,1.0,z vybraných městských investic pravidelně vyčleňovali část prostředků na kvalitní umění ve veřejném prostoru,True,Qwen3.8-27B,v3,cs,,2
+q08,pirati,pirati_001_201,4,dense,0.6212388873100281,True,1.0,1.0,Budeme postupně navyšovat částku vydávanou na kulturní dotace.,True,Qwen3.8-27B,v3,cs,,3
+q08,starostove,starostove_023_003,3,dense,0.5931172370910645,True,1.0,1.0,Budeme prosazovat výrazné navýšení místního poplatku z pobytu a část výnosu použijeme na kulturní infrastrukturu a kulturní život.,True,Qwen3.8-27B,v3,cs,,4
+q08,spojena_levice,spojena_levice_004_002,1,dense,0.6273648738861084,True,1.0,0.75,Stabilní provozní dotace pro kulturní zařízení v městském vlastnictví.,True,Qwen3.8-27B,v3,cs,,5
+q08,levice,levice_005_003,2,dense,0.5737009644508362,True,1.0,0.75,"Budeme proto podporovat stabilní víceleté provozní financování nezávislých divadel, performativních scén a dalších kulturních prostorů",True,Qwen3.8-27B,v3,cs,,6
+q08,starostove,starostove_023_002,4,dense,0.5728683471679688,True,1.0,0.75,"Dáme pražské kultuře stabilní, předvídatelné a férové financování.",True,Qwen3.8-27B,v3,cs,,7
+q08,pirati,pirati_001_199,3,dense,0.6657318472862244,True,0.5,0.75,"Zajistíme transparentní, předvídatelné a byrokraticky nenáročné financování, které tvůrcům rozváže ruce.",True,Qwen3.8-27B,v3,cs,,8
+q10,voluntia,voluntia_001_037,1,dense,0.7543164491653442,True,1.0,1.0,Podporujeme dostavbu městského okruhu i spolupráci s Ředitelstvím silnic a dálnic na dostavbě pražského okruhu.,True,Qwen3.8-27B,v3,cs,,1
+q10,spojena_levice,spojena_levice_002_002,1,dense,0.7020026445388794,True,1.0,1.0,Prioritní dokončení okruhu 511 a podpora výstavby dálničního i městského okruhu jako celku.,True,Qwen3.8-27B,v3,cs,,2
+q10,prahasobe,prahasobe_detail_004,2,dense,0.7010042667388916,True,1.0,1.0,Dostavbu vnějšího okruhu jsme se státem rozjeli a budeme spolupracovat na jeho kompletním dokončení.,True,Qwen3.8-27B,v3,cs,,3
+q10,pirati,pirati_001_015,2,dense,0.5878567695617676,True,1.0,1.0,"Podporujeme nový železniční uzel Praha (Václavské náměstí–Hlavní nádraží), budování vysokorychlostních železničních tratí, dostavbu pražského okruhu.",True,Qwen3.8-27B,v3,cs,,4
+q10,spd,spd_001_002,1,dense,0.5670839548110962,True,1.0,1.0,dostavět Pražský okruh a potřebné radiály,True,Qwen3.8-27B,v3,cs,,5
+q10,spd,spd_001_014,3,dense,0.5485741496086121,True,1.0,0.75,Dokončit okruh a radiály,True,Qwen3.8-27B,v3,cs,,6
+q10,starostove,starostove_008_002,2,dense,0.6219595670700073,True,0.5,1.0,budeme prosazovat dokončení Pražského i Městského okruhu.,True,Qwen3.8-27B,v3,cs,,7
+q11,prahasobe,prahasobe_detail_053,1,dense,0.7267963886260986,True,1.0,1.0,Hřiště u škol otevřeme lidem a nastavíme jasná pravidla využití.,True,Qwen3.8-27B,v3,cs,,1
