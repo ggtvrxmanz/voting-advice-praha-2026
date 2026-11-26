@@ -1,0 +1,15 @@
+query_id;split;query;relevant_ids;relevant_ids PROTI;;
+c;dev;Praha by mìla dostavìt metro D.;"prahasobe_detail_001; prahasobe_roadmap_014; pirati_001_061;starostove_008_002;spojena_levice_002_001;starostove_008_003;
+spolu-portlik_001_009";;smazala jsem: spojena_levice_001_004;
+1;dev;Dopravní podnik by mìl zdražit jízdné.;"voluntia_001_063;voluntia_001_064;";"spojena_levice_002_001;levice_006_002;spd_001_002;ano_010_004";;
+2;dev;Mìsto má stavìt více mìstských bytù.;"ano_005_004; ano_006_004; ano_005_007;pirati_001_002;prahasobe_roadmap_001;prahasobe_detail_008;prahasobe_detail_018; prahasobe_roadmap_012;starostove_007_002;starostove_007_003;starostove_007_001;starostove_005_002;levice_002_002;spojena_levice_001_003;spd_001_004;spolu-portlik_001_010
+";voluntia_001_007;;
+3;dev;Praha má zpøísnit krátkodobé pronájmy typu Airbnb.;"ano_005_008; prahasobe_roadmap_017; starostove_027_004; levice_003_001; spd_001_010; spojena_levice_001_004;starostove_027_002;pirati_001_009;jsme_praha_005_006";voluntia_001_022;;
+4;dev;Praha má zvýšit poèet strážníkù v ulicích.;"ano_002_003; starostove_018_005; spojena_levice_004_001";;;
+5;dev;Mìsto má vysazovat více stromù na sídlištích.;"ano_007_002; prahasobe_detail_033; pirati_001_025;pirati_001_149;prahasobe_roadmap_013";;;
+6;test;Praha by mìla posílit MHD ve špièce.;"pirati_001_063;pirati_001_075;starostove_008_003;prahasobe_roadmap_014;spojena_levice_002_001";;;
+7;test;Magistrát má zveøejòovat všechny smlouvy mìstských firem.;"pirati_001_092;pirati_001_090;spojena_levice_004_004;spojena_levice_004_001;jsme_praha_001_010;jsme_praha_001_008;";;;
+8;test;Mìsto má dotovat kulturu z veøejných penìz.;"starostove_024_003;starostove_023_002;pirati_001_201;levice_005_003;levice_005_002;spojena_levice_004_002;";"voluntia_001_038;";;
+9;test;Parkování pro návštìvníky má být dražší.;"spolu-portlik_001_008;levice_006_002;voluntia_001_067;voluntia_001_065;pirati_001_079";spd_001_002;;
+10;test;Pražský okruh se má dostavìt.;"prahasobe_roadmap_007; spd_001_002; spojena_levice_002_002;ano_004_006;starostove_008_002;voluntia_001_037;prahasobe_detail_004";;;
+11;test;Školy mají otevøít høištì veøejnosti.;"prahasobe_detail_053; ano_009_001; spojena_levice_002_003;pirati_001_194";;;

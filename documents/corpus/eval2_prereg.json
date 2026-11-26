@@ -1,0 +1,38 @@
+{
+ "thresholds": {
+  "valid_json_min": 0.98,
+  "relevance_recall_min": 0.8,
+  "fpr_blockA_max": 0.15,
+  "disagree_recall_min": 0.7,
+  "max_agree_disagree_flips": 0,
+  "judge_vs_consensus_kappa_min": 0.65
+ },
+ "headline": [
+  "relevance recall",
+  "block-A FPR (weighted)",
+  "DISAGREE recall",
+  "AGREE<->DISAGREE flips"
+ ],
+ "config": {
+  "model": "Qwen3.8-27B",
+  "model_2": "qwen3-vl:235b-a22b-instruct",
+  "params": {
+   "temperature": 0,
+   "seed": 42,
+   "max_tokens": 1024
+  },
+  "params_2": {
+   "temperature": 0,
+   "seed": 42,
+   "max_tokens": 1024
+  },
+  "prompt_version": "v3",
+  "prompt_sha": "ab0467c9afcba18126629612a3354318c8fb95ae7b4792284c7e3419744f6106",
+  "tau": 0,
+  "k_stance": 5,
+  "claims_sha": "e07bb9b5e9164152d05ae6f5859cb8881edbf437281a9ffd9dbe2614ccce5bba",
+  "labels_sha": "b39e12350faf7ce01185b8b9848b447b3e8d281b06d1f3a3534f46c298766c83",
+  "tags_sha": "3381cdb1e5e5973ac3cd9d18da74ec599766452ad8a82ce9fe9fb5213e4d6683"
+ },
+ "written": "2026-11-26 09:46"
+}
